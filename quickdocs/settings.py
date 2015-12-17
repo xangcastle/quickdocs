@@ -98,3 +98,17 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 SESSION_COOKIE_AGE = 7200
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+    'apptemplates.Loader',
+    'django.template.loaders.eggs.Loader',
+)
+
+import django.conf.global_settings as DEFAULT_SETTINGS
+
+CUSTOM_PROCESSORS = ('django.core.context_processors.request',)
+
+TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + CUSTOM_PROCESSORS
