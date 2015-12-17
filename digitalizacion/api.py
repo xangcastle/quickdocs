@@ -4,6 +4,8 @@ from .models import Empleado
 import string
 import random
 from django.conf import settings
+from metropolitana.models import Paquete
+import math
 
 
 def generar_paginas(paquetes, by_page=6.0):
@@ -87,14 +89,15 @@ def comprobacion(cedula):
 
 
 def cargar_ecuenta(empleado, path):
-    empleado.ecuenta.name = get_media_url(empleado, 'archivo.pdf')
-    empleado.save()
-    ruta = empleado.ecuenta.path
-    carpeta = ruta.replace(os.path.basename(ruta), '')
-    if not os.path.exists(carpeta):
-        os.makedirs(carpeta)
-    os.rename(path, os.path.join(settings.MEDIA_ROOT,
-    empleado.ecuenta.path))
+    if empleado:
+        empleado.ecuenta.name = get_media_url(empleado, 'archivo.pdf')
+        empleado.save()
+        ruta = empleado.ecuenta.path
+        carpeta = ruta.replace(os.path.basename(ruta), '')
+        if not os.path.exists(carpeta):
+            os.makedirs(carpeta)
+        os.rename(path, os.path.join(settings.MEDIA_ROOT,
+        empleado.ecuenta.path))
 
 
 def descomponer(path):

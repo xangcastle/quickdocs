@@ -7,4 +7,5 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^adminactions/', include('adminactions.urls')),
+    url(r'^digitalizacion/', include('digitalizacion.urls')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

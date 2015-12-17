@@ -1,0 +1,4 @@
+/media
+/static
+*.pyc
+*.pyo
