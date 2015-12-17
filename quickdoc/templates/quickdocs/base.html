@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% load staticfiles %}
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="http://code.jquery.com/jquery-latest.js"></script>
+        <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+        <script>
+            function mostrar(ruta){
+                $('#documento').empty().append('<iframe src="'+ ruta +'" width="1200" height="1000"></iframe>');
+            }
+        </script>
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="well">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                            <div class="panel panel-default">
+                                <div class="panel-heading" role="tab" id="headingOne">
+                                    <h4 class="panel-title">
+                                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                            INFORMACION GENERAL DEL CLIENTE
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                                    <div class="panel-body">
+                                        <ul>
+                                            {% for i in expediente.informacion_general %}
+                                            <li><a onclick='mostrar("{{ i.documento.url }}")'>{{ i.indice }} {{ i.descripcion }}</a></li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="false">
+                            <div class="panel panel-default">
+                                <div class="panel-heading" role="tab" id="heading2">
+                                    <h4 class="panel-title">
+                                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#menu2" aria-expanded="false" aria-controls="menu2">
+                                            CUENTAS
+                                        </a>
+                                    </h4>
+                                </div>
+                                <div id="menu2" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading2">
+                                    <div class="panel-body">
+                                        <ul>
+                                            {% for c in expediente.cuentas %}
+                                            <li>{{ c.numero }}</li>
+                                            {% for d in c.documentos %}
+                                            <li><a onclick='mostrar("{{ d.documento.url }}")'>{{ d.indice }} {{ d.descripcion }}</a></li>
+                                            {% endfor %}
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div id="documento"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
