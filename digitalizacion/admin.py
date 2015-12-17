@@ -7,6 +7,17 @@ import math
 from metropolitana.models import exportar_media_temp, Paquete
 from .api import indexar_carpeta
 import os
+from django.http.response import HttpResponse
+from django.core.servers.basehttp import FileWrapper
+
+
+def download_file(path):
+    if not os.path.exists(path):
+        return HttpResponse('Sorry. This file is not available.')
+    else:
+        response = HttpResponse(FileWrapper(file(path)), content_type='application/force-download')
+        response['Content-Disposition'] = 'attachment; filename=%s' % os.path.basename(path)
+        return response
 
 
 class pod_admin(admin.ModelAdmin):
@@ -104,6 +115,7 @@ class empleado_admin(ImportExportModelAdmin):
             cmd = "cd %s && pdftk tm/*.pdf cat output ecuenta.pdf && rm -rf tm"\
              % carpeta
             os.system(cmd)
+        return download_file(os.path.join(carpeta, 'ecuenta.pdf'))
 
 
 admin.site.register(Empleado, empleado_admin)
