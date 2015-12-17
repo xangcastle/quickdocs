@@ -6,6 +6,7 @@ from django.template.context import RequestContext
 import math
 from metropolitana.models import exportar_media_temp, Paquete
 from .api import indexar_carpeta
+import os
 
 
 class pod_admin(admin.ModelAdmin):
@@ -87,6 +88,23 @@ class empleado_admin(ImportExportModelAdmin):
         'link_ecuenta')
     list_filter = ('localidad', )
     search_fields = ('idempleado', 'nombre', 'cedula')
+    actions = ['action_exportar']
+
+    def action_exportar(self, request, queryset):
+        carpeta = queryset[0].export_path()
+        cmd = "cd %s && rm *.pdf" % carpeta
+        os.system(cmd)
+        numero_pagina = 1
+        for e in queryset:
+            e.exportar_ecuenta(str(numero_pagina) + '.pdf')
+            numero_pagina += 1
+        if numero_pagina > 1:
+            cmd = "cd %s && mkdir tm && mv *.pdf tm/" % carpeta
+            os.system(cmd)
+            cmd = "cd %s && pdftk tm/*.pdf cat output ecuenta.pdf && rm -rf tm"\
+             % carpeta
+            os.system(cmd)
+
 
 admin.site.register(Empleado, empleado_admin)
 admin.site.register(Tar)

@@ -8,6 +8,7 @@ from multifilefield.models import MultiFileField
 import os
 from django.conf import settings
 from metropolitana.indexacion import id_generator
+import shutil
 
 
 class Pod(models.Model):
@@ -269,6 +270,24 @@ class Empleado(models.Model):
                 'ver estado de cuenta')
         else:
             return ''
+
+    def export_path(self):
+        path = os.path.join(settings.MEDIA_ROOT, 'TEMP')
+        if not os.path.exists(path):
+                os.makedirs(path)
+        return path
+
+    def get_name(self):
+        return str(self.idempleado)
+
+    def exportar_ecuenta(self, name=None):
+        if self.ecuenta:
+            o = self.ecuenta.path
+            if name:
+                d = os.path.join(self.export_path(), name)
+            else:
+                d = os.path.join(self.export_path(), self.get_name())
+            shutil.copy(o, d)
 
     link_ecuenta.short_description = ''
     link_ecuenta.allow_tags = True
