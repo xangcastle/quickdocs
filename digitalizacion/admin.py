@@ -107,7 +107,7 @@ class empleado_admin(ImportExportModelAdmin):
         os.system(cmd)
         numero_pagina = 1
         for e in queryset:
-            e.exportar_ecuenta(str(numero_pagina) + '.pdf')
+            e.exportar_ecuenta(str(numero_pagina).zfill(6) + '.pdf')
             numero_pagina += 1
         if numero_pagina > 1:
             cmd = "cd %s && mkdir tm && mv *.pdf tm/" % carpeta
