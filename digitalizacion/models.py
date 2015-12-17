@@ -5,10 +5,9 @@ from metropolitana.models import Paquete, importar_media
 from django.db.models import Max
 from datetime import datetime
 from multifilefield.models import MultiFileField
-from metropolitana.indexacion import id_generator
 import os
 from django.conf import settings
-import ast
+from metropolitana.indexacion import id_generator
 
 
 class Pod(models.Model):
@@ -223,8 +222,6 @@ class Indexacion(models.Model):
 
 class Tar(models.Model):
     archivo = models.FileField(upload_to='TEMP')
-    archivos = MultiFileField(null=True, blank=True)
-    aplicar_ocr = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "carga de archivos"
@@ -275,3 +272,4 @@ class Empleado(models.Model):
 
     link_ecuenta.short_description = ''
     link_ecuenta.allow_tags = True
+

@@ -1,12 +1,9 @@
-# -*- coding: utf-8 -*-
 import pyPdf
 import os
-from .models import *
-from metropolitana.models import Paquete
+from .models import Empleado
 import string
 import random
 from django.conf import settings
-import math
 
 
 def generar_paginas(paquetes, by_page=6.0):
@@ -70,36 +67,10 @@ def extract_content(pdf):
     return content
 
 
-def extract_cedula(content, option):
-    code = ''
-    if option == 1:
-        i = content.find("IDENTIFICACION #") + 16
-        f = i + 14
-        code = limpiar_espacios(content[i:f])
-        #print code
-    if option == 2:
-        i = content.find("CODE") + 4
-        f = i + 15
-        code = limpiar_espacios(eliminar_letras(content[i:f]))
-        #print code
-    if option == 3:
-        f = content.find("#") - 5
-        i = f - 16
-        code = limpiar_espacios(eliminar_letras(content[i:f]))
-        #print code
-    if option == 4:
-        todo = eliminar_letras(content).split(" ")
-        for n in todo:
-            if len(n) >= 10:
-                code = n
-        #print code
-    if option == 5:
-        f = content.find("LOTE")
-        i = f - 13
-        code = limpiar_espacios(eliminar_letras(content[i:f]))
-        #print code
-    if not len(code) >= 10:
-        code = '0000000000'
+def extract_cedula(content):
+    i = content.find("IDENTIFICACION #") + 16
+    f = i + 14
+    code = limpiar_espacios(content[i:f])
     return code
 
 
@@ -109,7 +80,7 @@ def comprobacion(cedula):
     if queryset.count() > 0:
         p = queryset[0]
     if p:
-        print p.nombre
+        print p.nombre.encode('ascii', 'ignore')
         return p
     else:
         return None
@@ -126,35 +97,41 @@ def cargar_ecuenta(empleado, path):
     empleado.ecuenta.path))
 
 
-def carga_manual(path, fecha):
-    ruta = "/home/abel/indexacion/" + str(fecha)
-    archivo = os.path.splitext(os.path.basename(path))[0][0:]
-    extension = os.path.splitext(path)[1][1:]
-    if not os.path.exists(ruta):
-        os.makedirs(ruta)
-    os.rename(path, os.path.join(ruta, '{}.{}'.format(archivo, extension)))
+def descomponer(path):
+    data = {}
+    data['carpeta'] = path.replace(os.path.basename(path), '')
+    data['archivo'] = os.path.splitext(os.path.basename(path))[0][0:]
+    data['extension'] = os.path.splitext(path)[1][1:]
+    return data
 
 
-def indexar(path, fecha=None):
-    carpeta = path.replace(os.path.basename(path), '')
-    archivo = os.path.splitext(os.path.basename(path))[0][0:]
-    #extension = os.path.splitext(path)[1][1:]
-    #nr = os.path.join(carpeta, '{}.{}'.format(archivo + '_ocr', extension))
-    #os.system("pypdfocr " + path)
-    pdf = pyPdf.PdfFileReader(file(path, "r"))
-    content = extract_content(pdf)
+def make_ocr(path):
+    nr = os.path.join(descomponer(path)['carpeta'],
+        '{}.{}'.format(descomponer(path)['archivo'] + '_ocr',
+            descomponer(path)['extension']))
+    os.system("pypdfocr " + path)
+    os.remove(path)
+    return nr
+
+
+def save_content(path, content):
     f = open(os.path.join
-    (carpeta, '{}.{}'.format(archivo + '_txt', 'txt')), 'w')
+    (descomponer(path)['carpeta'], '{}.{}'.format(
+        descomponer(path)['archivo'] + '_txt', 'txt')), 'w')
     f.write(content)
     f.close()
-    cedula = extract_cedula(content, 1)
-    print cedula
-    p = comprobacion(cedula)
-    if p:
-        cargar_ecuenta(p, path)
-    else:
-        carga_manual(path, fecha)
-    #os.remove(nr)
+
+
+def indexar(path, indexacion):
+    pdf = None
+    if indexacion.make_ocr:
+        path = make_ocr(path)
+    pdf = pyPdf.PdfFileReader(file(path, "r"))
+    content = extract_content(pdf)
+    cedula = extract_cedula(content)
+    if cedula:
+        e = comprobacion(cedula)
+        cargar_ecuenta(e, path)
 
 
 def preparar_carpeta(path):
@@ -169,12 +146,14 @@ def preparar_carpeta(path):
         return False
 
 
-def indexar_carpeta(path, fecha):
+def indexar_carpeta(indexacion):
+    path = indexacion.path()
     if preparar_carpeta(path):
         archivos = sorted(os.listdir(path))
         for a in archivos:
             if a[-3:] == 'pdf':
-                indexar(os.path.join(path, a), fecha)
+                path = os.path.join(indexacion.path(), a)
+                indexar(path, indexacion)
         #os.system("rm -rf %s" % path)
 
 
@@ -192,5 +171,3 @@ def recoger_archivos(fecha):
 if __name__ == "__main__":
     import sys
     indexar_carpeta(sys.argv[1])
-
-

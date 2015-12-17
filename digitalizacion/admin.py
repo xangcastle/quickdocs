@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 import math
 from metropolitana.models import exportar_media_temp, Paquete
-from metropolitana.indexacion import indexar_carpeta
+from .api import indexar_carpeta
 
 
 class pod_admin(admin.ModelAdmin):
