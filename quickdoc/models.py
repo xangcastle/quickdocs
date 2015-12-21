@@ -64,7 +64,7 @@ class Expediente(models.Model):
         return cuentas
 
     def ver_expediente(self):
-        return '<a href="/quickdocs/expediente/%s/" target="blank">Ver expediente</a>' % (self.id)
+        return '<a href="/quickdoc/expediente/%s/" target="blank">Ver expediente</a>' % (self.id)
     ver_expediente.allow_tags = True
 
 
