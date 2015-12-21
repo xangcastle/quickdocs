@@ -8,4 +8,5 @@ urlpatterns = patterns('',
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^adminactions/', include('adminactions.urls')),
     url(r'^digitalizacion/', include('digitalizacion.urls')),
+    url(r'^quickdocs/', include('quickdocs.urls')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
