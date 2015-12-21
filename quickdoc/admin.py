@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import *
+from import_export.admin import ImportExportModelAdmin
 
 
 class documento_admin(admin.TabularInline):
@@ -7,7 +8,7 @@ class documento_admin(admin.TabularInline):
     extra = 0
 
 
-class indice_admin(admin.ModelAdmin):
+class indice_admin(ImportExportModelAdmin):
     list_display = ('indice', 'descripcion')
     search_fields = ('indice', 'descripcion')
     list_filter = ('indice_superior',)
