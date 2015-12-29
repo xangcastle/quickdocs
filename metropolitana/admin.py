@@ -188,8 +188,8 @@ class estadistica_departamento(base_tabular):
 
 class estadistica_ciclo(admin.ModelAdmin):
     list_display = ('code', 'ano', 'mes', 'ciclo', 'total', 'entregados',
-        'en_carpeta', 'pendientes', 'rendidos', 'rendiciones', 'por_rendir',
-        'cumplimiento', 'alertas')
+        'pendientes', 'rendidos', 'rendiciones', 'por_rendir',
+        'cumplimiento')
     list_filter = ('ano', 'mes')
     ordering = ['-ano', '-mes', 'ciclo']
     fieldsets = (
@@ -283,23 +283,6 @@ class estadistica_ciclo(admin.ModelAdmin):
             response = render_to_response('metropolitana/comprobante.html',
                 ctx, context_instance=RequestContext(request))
             return response
-            #response = PDFTemplateResponse(request=request,
-                                   #template='metropolitana/comprobante.html',
-                                   #filename="comprobantes.pdf",
-                                   #context=ctx,
-                                   #show_content_in_browser=False,
-                                   #)
-            #return render_to_pdf_response(request,
-                #'metropolitana/comprobante.html', ctx)
-            #template = loader.get_template('metropolitana/comprobante.html')
-            #html = template.render(Context(ctx))
-            #html.encode("UTF-8")
-            #result = StringIO.StringIO()
-            #pdf = pisa.pisaDocument(StringIO.StringIO(html.encode("UTF-8")), result, path= settings.RUTA_PROYECTO)
-
-        #if not pdf.err:
-            #return HttpResponse(result.getvalue(), content_type='application/pdf')
-        #return HttpResponse('<pre>%s</pre>' % escape(html))
 
         class Media:
             js = ("/static/metropolitana/js/estadistica.js",)
