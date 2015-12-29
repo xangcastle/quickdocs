@@ -88,7 +88,7 @@ class inferiores(models.Manager):
 
 class Indice(models.Model):
     indice = models.CharField(max_length=6)
-    descripcion = models.CharField(max_length=75)
+    descripcion = models.CharField(max_length=200)
     indice_superior = models.ForeignKey('self', null=True,
         related_name="relacion_indice_superior", blank=True)
     objects = models.Manager()
