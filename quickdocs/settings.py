@@ -42,7 +42,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'quickdoc',
     'digitalizacion',
-    'metropolitana',
 )
 
 MIDDLEWARE_CLASSES = (

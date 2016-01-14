@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('indice', models.CharField(max_length=6)),
-                ('descripcion', models.CharField(max_length=75)),
+                ('descripcion', models.CharField(max_length=200)),
                 ('indice_superior', models.ForeignKey(related_name=b'relacion_indice_superior', blank=True, to='quickdoc.Indice', null=True)),
             ],
             options={
