@@ -86,11 +86,31 @@ class inferiores(models.Manager):
                 indice_superior__in=Indice.intermedios.all())
 
 
+class naturales(models.Manager):
+
+    def get_queryset(self):
+        return super(naturales, self).get_queryset().filter(
+            tipo_expediente='NATURAL')
+
+
+class juridicos(models.Manager):
+
+    def get_queryset(self):
+        return super(juridicos, self).get_queryset().filter(
+            tipo_expediente='JURIDICO')
+
+
 class Indice(models.Model):
     indice = models.CharField(max_length=6)
     descripcion = models.CharField(max_length=200)
     indice_superior = models.ForeignKey('self', null=True,
         related_name="relacion_indice_superior", blank=True)
+    TIPOS_EXPEDIENTE = (
+            ('NATURAL', 'NATURAL'),
+            ('JURIDICO', 'JURIDICO')
+        )
+    tipo_expediente = models.CharField(max_length=25, null=True, blank=True,
+        choices=TIPOS_EXPEDIENTE)
     objects = models.Manager()
     superiores = superiores()
     intermedios = intermedios()
@@ -130,8 +150,46 @@ class indice_inferior(Indice):
         proxy = True
 
 
-class Documento(models.Model):
+class expediente_natural(Indice):
+    objects = models.Manager()
+    objects = naturales()
+
+    class Meta:
+        proxy = True
+
+
+class expediente_juridico(Indice):
+    objects = models.Manager()
+    objects = juridicos()
+
+    class Meta:
+        proxy = True
+
+
+class base_documento(models.Model):
     numero = models.CharField(max_length=25, null=True)
     expediente = models.ForeignKey(Expediente, null=True)
-    indice = models.ForeignKey(Indice, null=True)
     documento = models.FileField(upload_to=get_media_url, null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+
+class Documento(base_documento):
+    indice = models.ForeignKey(Indice, null=True)
+
+
+class documento_natural(base_documento):
+    indice = models.ForeignKey(expediente_natural, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'quickdoc_documento'
+
+
+class documento_juridico(base_documento):
+    indice = models.ForeignKey(expediente_juridico, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'quickdoc_documento'

@@ -3,8 +3,13 @@ from .models import *
 from import_export.admin import ImportExportModelAdmin
 
 
-class documento_admin(admin.TabularInline):
-    model = Documento
+class expediente_natural_admin(admin.TabularInline):
+    model = documento_natural
+    extra = 0
+
+
+class expediente_juridico_admin(admin.TabularInline):
+    model = documento_juridico
     extra = 0
 
 
@@ -16,8 +21,9 @@ admin.site.register(Indice, indice_admin)
 
 
 class expediente_admin(admin.ModelAdmin):
-    list_display = ('codigo', 'identificacion', 'nombre', 'tipodoc', 'ver_expediente')
+    list_display = ('codigo', 'identificacion', 'nombre', 'tipodoc',
+        'ver_expediente')
     search_fields = ('codigo', 'identificacion', 'nombre')
     list_filter = ('tipodoc',)
-    inlines = [documento_admin]
+    inlines = [expediente_natural_admin, expediente_juridico_admin]
 admin.site.register(Expediente, expediente_admin)
