@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Max
 
 
 def get_media_url(model, filename):
@@ -7,15 +8,125 @@ def get_media_url(model, filename):
     return '%s/%s/%s' % (clase, code, filename)
 
 
-class Expediente(models.Model):
+def get_by_code(instance, code):
+    model = type(instance)
+    try:
+        return model.objects.get(code=code)
+    except:
+        return instance
+
+
+def get_by_name(instance, name):
+    model = type(instance)
+    try:
+        return model.objects.get(name=name)
+    except:
+        return instance
+
+
+def get_or_create_entidad(instance, name):
+    model = type(instance)
+    o, created = model.objects.get_or_create(name=name)
+    o.save()
+    return o
+
+
+def get_code(entidad):
+        model = type(entidad)
+        code = '1'
+        sets = model.objects.filter(code__isnull=False)
+        if sets:
+            maxi = str(sets.aggregate(Max('code'))['code__max'])
+            if maxi:
+                consecutivo = list(range(1, int(maxi)))
+                ocupados = list(sets.values_list('code',
+                flat=True))
+                n = 0
+                for l in ocupados:
+                    ocupados[n] = int(str(l))
+                    n += 1
+                disponibles = list(set(consecutivo) - set(ocupados))
+                if len(disponibles) > 0:
+                    code = min(disponibles)
+                else:
+                    code = max(ocupados) + 1
+        return str(code).zfill(4)
+
+
+class base(models.Model):
+
+    def __iter__(self):
+        for field_name in self._meta.get_all_field_names():
+            try:
+                value = getattr(self, field_name)
+            except:
+                value = None
+            yield (field_name, value)
+
+    class Meta:
+        abstract = True
+
+
+class base_entidad(base):
+    code = models.CharField(max_length=25, null=True, blank=True,
+        verbose_name="codigo")
+    name = models.CharField(max_length=100, verbose_name="nombre")
+
+    class Meta:
+        abstract = True
+
+
+class Entidad(base_entidad):
+    activo = models.BooleanField(default=True)
+
+    def __unicode__(self):
+        if self.code and self.name:
+            return str(self.code) + " " + self.name
+        elif self.name:
+            return self.name
+        elif self.code:
+            return str(self.code)
+        else:
+            return ''
+
+    @staticmethod
+    def autocomplete_search_fields():
+        return ("code__iexact", "name__icontains",)
+
+    def save(self, *args, **kwargs):
+        if self.code is None or self.code == '':
+            self.code = get_code(self)
+        super(Entidad, self).save()
+
+    class Meta:
+        abstract = True
+        ordering = ['code']
+
+
+TIPOS_PERSONAS = (
+    ('NATURAL', 'NATURAL'),
+    ('JURIDICO', 'JURIDICO'),
+    )
+
+
+class base_expediente(models.Model):
     codigo = models.CharField(max_length=10, null=True,
         verbose_name="Codigo del Cliente")
     identificacion = models.CharField(max_length=30, null=True,
         verbose_name="No de Identificacion")
     nombre = models.CharField(max_length=150, null=True,
         verbose_name="Nombre Completo")
-    tipodoc = models.CharField(max_length=50, null=True,
-        verbose_name="Tipo Documento")
+    tipo = models.CharField(max_length=25, null=True,
+        verbose_name="Tipo Documento", choices=TIPOS_PERSONAS)
+
+    class Meta:
+        abstract = True
+
+
+class Expediente(base_expediente):
+
+    def __unicode__(self):
+        return ' '.join([self.codigo, self.nombre])
 
     def documentos(self):
         return Documento.objects.filter(expediente=self)
@@ -67,6 +178,10 @@ class Expediente(models.Model):
         return '<a href="/quickdoc/expediente/%s/" target="blank">Ver expediente</a>' % (self.id)
     ver_expediente.allow_tags = True
 
+    class Meta:
+        verbose_name = "expediente"
+        verbose_name_plural = "consulta de expedientes"
+
 
 class superiores(models.Manager):
     def get_queryset(self):
@@ -90,14 +205,14 @@ class naturales(models.Manager):
 
     def get_queryset(self):
         return super(naturales, self).get_queryset().filter(
-            tipo_expediente='NATURAL')
+            tipo='NATURAL')
 
 
 class juridicos(models.Manager):
 
     def get_queryset(self):
         return super(juridicos, self).get_queryset().filter(
-            tipo_expediente='JURIDICO')
+            tipo='JURIDICO')
 
 
 class Indice(models.Model):
@@ -105,12 +220,13 @@ class Indice(models.Model):
     descripcion = models.CharField(max_length=200)
     indice_superior = models.ForeignKey('self', null=True,
         related_name="relacion_indice_superior", blank=True)
-    TIPOS_EXPEDIENTE = (
-            ('NATURAL', 'NATURAL'),
-            ('JURIDICO', 'JURIDICO')
-        )
-    tipo_expediente = models.CharField(max_length=25, null=True, blank=True,
-        choices=TIPOS_EXPEDIENTE)
+    tipo = models.CharField(max_length=25, null=True,
+        verbose_name="Tipo Documento", choices=TIPOS_PERSONAS)
+    by_default = models.BooleanField(
+        help_text="este indice es parte " +
+        "de la informacion general del cliente",
+        verbose_name="por defecto", default=False)
+
     objects = models.Manager()
     superiores = superiores()
     intermedios = intermedios()
@@ -121,6 +237,9 @@ class Indice(models.Model):
 
     class Meta:
         ordering = ('indice',)
+        unique_together = ("indice", "tipo")
+        verbose_name = "indice"
+        verbose_name_plural = "configuracion de secciones"
 
     def sub_indices(self):
         return Indice.objects.filter(indice_superior=self)
@@ -185,6 +304,8 @@ class documento_natural(base_documento):
     class Meta:
         managed = False
         db_table = 'quickdoc_documento'
+        verbose_name = "documento"
+        verbose_name_plural = "documentos de expediente tipo natural"
 
 
 class documento_juridico(base_documento):
@@ -193,3 +314,62 @@ class documento_juridico(base_documento):
     class Meta:
         managed = False
         db_table = 'quickdoc_documento'
+        verbose_name = "documento"
+        verbose_name_plural = "documentos de expediente tipo juridico"
+
+
+class Producto(Entidad):
+
+    indices = models.ManyToManyField(Indice, null=True,
+        verbose_name="documentacion requerida")
+
+    def __unicode__(self):
+        return " ".join([self.code, self.name])
+
+    class Meta:
+        verbose_name = "Item"
+        verbose_name_plural = "productos y servicios"
+
+
+class producto_cliente(models.Model):
+    cliente = models.ForeignKey(Expediente)
+    producto = models.ForeignKey(Producto)
+    numero = models.CharField(max_length=60, null=True, blank=True)
+
+    def __unicode__(self):
+        return " ".join([self.producto.name, self.numero])
+
+    class Meta:
+        verbose_name = "producto"
+        verbose_name_plural = "productos del cliente"
+
+
+class Importacion(base_expediente):
+    producto = models.CharField(max_length=255, null=True, blank=True)
+    numero = models.CharField(max_length=120, null=True, blank=True)
+
+    def __unicode__(self):
+        return ' '.join([self.producto, self.numero])
+
+    def get_expediente(self):
+        e, created = Expediente.objects.get_or_create(codigo=self.codigo)
+        e.identificacion = self.identificacion
+        e.nombre = self.nombre
+        e.tipo = self.tipo
+        e.save()
+        return e
+
+    def get_producto(self):
+        return get_or_create_entidad(Producto(), self.producto)
+
+    def integrar(self):
+        cliente = self.get_expediente()
+        producto = self.get_producto()
+        if self.numero:
+            pc, created = producto_cliente.objects.get_or_create(
+                cliente=cliente, producto=producto, numero=self.numero)
+        self.delete()
+
+    class Meta:
+        verbose_name = "registro"
+        verbose_name_plural = "importacion de datos"

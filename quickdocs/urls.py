@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = patterns('',
+    url(r'^$', 'quickdoc.views.home', name='home'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^adminactions/', include('adminactions.urls')),

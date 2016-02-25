@@ -30,10 +30,10 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
-    'adminactions',
-    'import_export',
     'grappelli_dynamic_navbar',
     'grappelli',
+    'adminactions',
+    'import_export',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -111,3 +111,6 @@ import django.conf.global_settings as DEFAULT_SETTINGS
 CUSTOM_PROCESSORS = ('django.core.context_processors.request',)
 
 TEMPLATE_CONTEXT_PROCESSORS = DEFAULT_SETTINGS.TEMPLATE_CONTEXT_PROCESSORS + CUSTOM_PROCESSORS
+
+
+GRAPPELLI_ADMIN_TITLE = 'BANPRO'
