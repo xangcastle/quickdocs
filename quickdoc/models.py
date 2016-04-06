@@ -131,109 +131,71 @@ class Expediente(base_expediente):
     def documentos(self):
         return Documento.objects.filter(expediente=self)
 
-    def informacion_general(self):
-        indice_info = Indice.objects.filter(indice__startswith="A.")
-        return self.documentos().filter(indice__in=indice_info)
-
-    def cuentas(self):
-        cuentas = []
-        indice_cuentas = Indice.objects.filter(indice__startswith="B.")
-        cs = self.documentos().filter(indice__in=indice_cuentas).order_by(
-            'numero').distinct('numero')
-        for c in cs:
-            cuenta = {}
-            cuenta['numero'] = c.numero
-            cuenta['documentos'] = self.documentos().filter(
-                numero=c.numero).order_by('indice')
-            cuentas.append(cuenta)
-        return cuentas
-
-    def depositos(self):
-        cuentas = []
-        indice_cuentas = Indice.objects.filter(indice__startswith="C.")
-        cs = self.documentos().filter(indice__in=indice_cuentas).order_by(
-            'numero').distinct('numero')
-        for c in cs:
-            cuenta = {}
-            cuenta['numero'] = c.numero
-            cuenta['documentos'] = self.documentos().filter(
-                numero=c.numero).order_by('indice')
-            cuentas.append(cuenta)
-        return cuentas
-
-    def tarjetas(self):
-        cuentas = []
-        indice_cuentas = Indice.objects.filter(indice__startswith="D.")
-        cs = self.documentos().filter(indice__in=indice_cuentas).order_by(
-            'numero').distinct('numero')
-        for c in cs:
-            cuenta = {}
-            cuenta['numero'] = c.numero
-            cuenta['documentos'] = self.documentos().filter(
-                numero=c.numero).order_by('indice')
-            cuentas.append(cuenta)
-        return cuentas
-
     def ver_expediente(self):
         return '<a href="/quickdoc/expediente/%s/" target="blank">Ver expediente</a>' % (self.id)
     ver_expediente.allow_tags = True
+
+    def productos(self):
+        return producto_cliente.objects.filter(cliente=self)
+
+    def render_data(self):
+        data = []
+        if self.documentos():
+            ps = self.documentos().order_by('producto').distinct('producto')
+            for p in ps:
+                obj = {}
+                obj['seccion'] = p.producto.name
+                obj['indices'] = []
+                ds = self.documentos().filter(producto=p.producto)
+                for d in ds:
+                    i = {}
+                    i['indice'] = d.indice.indice
+                    i['nombre'] = d.indice.name
+                    if d.documento:
+                        i['url'] = d.documento.url
+                    else:
+                        i['url'] = "#"
+                    obj['indices'].append(i)
+                data.append(obj)
+        return data
+
+    def indices(self):
+        indices = []
+        if self.productos():
+            for p in self.productos():
+                for i in p.producto.indices.all():
+                    d = {'indice': i.code, 'descripcion': i.name,
+                        'numero': p.numero, 'code': self.codigo,
+                        'barra': str(self.codigo) + str(p.numero) + str(i.code),
+                        'indice_id': i.id}
+                    indices.append(d)
+        return indices
+
+    def generar_documentos(self):
+        if self.productos():
+            for p in self.productos():
+                for i in p.producto.indices.all():
+                    d, created = Documento.objects.get_or_create(
+                    code=str(self.codigo) + str(p.numero) + str(i.code),
+                    indice=i,
+                    expediente=self, producto=p.producto)
+                    if p.numero:
+                        d.numero = p.numero
 
     class Meta:
         verbose_name = "expediente"
         verbose_name_plural = "consulta de expedientes"
 
 
-class superiores(models.Manager):
-    def get_queryset(self):
-        return super(superiores, self).get_queryset().filter(
-            indice_superior=None)
-
-
-class intermedios(models.Manager):
-    def get_queryset(self):
-        return Indice.objects.filter(
-            indice_superior__in=Indice.superiores.all())
-
-
-class inferiores(models.Manager):
-    def get_queryset(self):
-        return Indice.objects.filter(
-                indice_superior__in=Indice.intermedios.all())
-
-
-class naturales(models.Manager):
-
-    def get_queryset(self):
-        return super(naturales, self).get_queryset().filter(
-            tipo='NATURAL')
-
-
-class juridicos(models.Manager):
-
-    def get_queryset(self):
-        return super(juridicos, self).get_queryset().filter(
-            tipo='JURIDICO')
-
-
-class Indice(models.Model):
+class Indice(Entidad):
     indice = models.CharField(max_length=6)
-    descripcion = models.CharField(max_length=200)
-    indice_superior = models.ForeignKey('self', null=True,
-        related_name="relacion_indice_superior", blank=True)
     tipo = models.CharField(max_length=25, null=True,
         verbose_name="Tipo Documento", choices=TIPOS_PERSONAS)
-    by_default = models.BooleanField(
-        help_text="este indice es parte " +
-        "de la informacion general del cliente",
-        verbose_name="por defecto", default=False)
 
     objects = models.Manager()
-    superiores = superiores()
-    intermedios = intermedios()
-    inferiores = inferiores()
 
     def __unicode__(self):
-        return "%s %s" % (self.indice, self.descripcion)
+        return "%s %s %s" % (self.indice, self.name, self.tipo)
 
     class Meta:
         ordering = ('indice',)
@@ -245,50 +207,11 @@ class Indice(models.Model):
         return Indice.objects.filter(indice_superior=self)
 
 
-class indice_superior(Indice):
-    objects = models.Manager()
-    objects = superiores()
-
-    class Meta:
-        proxy = True
-
-
-class indice_intermedio(Indice):
-    objects = models.Manager()
-    objects = intermedios()
-
-    class Meta:
-        proxy = True
-
-
-class indice_inferior(Indice):
-    objects = models.Manager()
-    objects = inferiores()
-
-    class Meta:
-        proxy = True
-
-
-class expediente_natural(Indice):
-    objects = models.Manager()
-    objects = naturales()
-
-    class Meta:
-        proxy = True
-
-
-class expediente_juridico(Indice):
-    objects = models.Manager()
-    objects = juridicos()
-
-    class Meta:
-        proxy = True
-
-
 class base_documento(models.Model):
     numero = models.CharField(max_length=25, null=True)
     expediente = models.ForeignKey(Expediente, null=True)
     documento = models.FileField(upload_to=get_media_url, null=True, blank=True)
+    code = models.CharField(max_length=25, null=True)
 
     class Meta:
         abstract = True
@@ -296,26 +219,7 @@ class base_documento(models.Model):
 
 class Documento(base_documento):
     indice = models.ForeignKey(Indice, null=True)
-
-
-class documento_natural(base_documento):
-    indice = models.ForeignKey(expediente_natural, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'quickdoc_documento'
-        verbose_name = "documento"
-        verbose_name_plural = "documentos de expediente tipo natural"
-
-
-class documento_juridico(base_documento):
-    indice = models.ForeignKey(expediente_juridico, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'quickdoc_documento'
-        verbose_name = "documento"
-        verbose_name_plural = "documentos de expediente tipo juridico"
+    producto = models.ForeignKey('Producto', null=True)
 
 
 class Producto(Entidad):

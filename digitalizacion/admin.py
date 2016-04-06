@@ -10,8 +10,11 @@ def download_file(path):
     if not os.path.exists(path):
         return HttpResponse('Sorry. This file is not available.')
     else:
-        response = HttpResponse(FileWrapper(file(path)), content_type='application/force-download')
-        response['Content-Disposition'] = 'attachment; filename=%s' % os.path.basename(path)
+        response = HttpResponse(
+            FileWrapper(file(path)),
+            content_type='application/force-download')
+        response['Content-Disposition'] = \
+        'attachment; filename=%s' % os.path.basename(path)
         return response
 
 
@@ -37,6 +40,22 @@ class empleado_admin(ImportExportModelAdmin):
              % carpeta
             os.system(cmd)
         return download_file(os.path.join(carpeta, 'ecuenta.pdf'))
+
+
+class indexacion_admin(ImportExportModelAdmin):
+    date_hierarchy = "fecha"
+    list_display = ('fecha', 'carga_manual',
+        'carpeta', 'path')
+    fields = ('archivos', 'make_ocr')
+    actions = ['action_indexar']
+
+    def action_indexar(self, request, queryset):
+        for obj in queryset:
+            indexar_carpeta(obj)
+    action_indexar.short_description = \
+    'Iniciar proceso de indexacion automatica'
+
+admin.site.register(Indexacion, indexacion_admin)
 
 
 admin.site.register(Empleado, empleado_admin)

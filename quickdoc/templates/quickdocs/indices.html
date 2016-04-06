@@ -1,0 +1,14 @@
+<style>
+.etiqueta{
+    height: 10mm;
+    width: 70mm;
+    display: inline;
+    padding: 5mm;
+    margin: 5mm;
+    border-style: dashed;
+    }
+</style>
+
+{% for i in indices %}
+<div class="etiqueta">code {{ i.code }}{{ i.numero }}{{ i.indice }}</div>
+{% endfor %}

@@ -21,50 +21,28 @@
             <div class="well">
                 <div class="row">
                     <div class="col-md-3">
+                {% for p in expediente.render_data %}
                         <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                             <div class="panel panel-default">
                                 <div class="panel-heading" role="tab" id="headingOne">
                                     <h4 class="panel-title">
                                         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                            INFORMACION GENERAL DEL CLIENTE
+                                            {{ p.seccion }}
                                         </a>
                                     </h4>
                                 </div>
                                 <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                                     <div class="panel-body">
                                         <ul>
-                                            {% for i in expediente.informacion_general %}
-                                            <li><a onclick='mostrar("{{ i.documento.url }}")'>{{ i.indice }} {{ i.descripcion }}</a></li>
+                                            {% for i in p.indices %}
+                                            <li><a onclick='mostrar("{{ i.url }}")'>{{ i.indice }} {{ i.nombre }}</a></li>
                                             {% endfor %}
                                         </ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="false">
-                            <div class="panel panel-default">
-                                <div class="panel-heading" role="tab" id="heading2">
-                                    <h4 class="panel-title">
-                                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#menu2" aria-expanded="false" aria-controls="menu2">
-                                            CUENTAS
-                                        </a>
-                                    </h4>
-                                </div>
-                                <div id="menu2" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading2">
-                                    <div class="panel-body">
-                                        <ul>
-                                            {% for c in expediente.cuentas %}
-                                            <li>{{ c.numero }}</li>
-                                            {% for d in c.documentos %}
-                                            <li><a onclick='mostrar("{{ d.documento.url }}")'>{{ d.indice }} {{ d.descripcion }}</a></li>
-                                            {% endfor %}
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    {% endfor %}
                     </div>
                     <div class="col-md-9">
                         <div id="documento"></div>

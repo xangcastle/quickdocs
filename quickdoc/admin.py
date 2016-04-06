@@ -1,18 +1,8 @@
 from django.contrib import admin
 from .models import *
 from import_export.admin import ImportExportModelAdmin
-
-
-class expediente_natural_admin(admin.TabularInline):
-    classes = ('grp-collapse grp-open',)
-    model = documento_natural
-    extra = 0
-
-
-class expediente_juridico_admin(admin.TabularInline):
-    classes = ('grp-collapse grp-open',)
-    model = documento_juridico
-    extra = 0
+from django.template.context import RequestContext
+from django.shortcuts import render_to_response
 
 
 class producto_cliente_admin(admin.TabularInline):
@@ -27,8 +17,22 @@ class expediente_admin(admin.ModelAdmin):
         'ver_expediente')
     search_fields = ('codigo', 'identificacion', 'nombre')
     list_filter = ('tipo',)
-    inlines = [producto_cliente_admin, expediente_juridico_admin,
-        expediente_natural_admin]
+    inlines = [producto_cliente_admin]
+    actions = ['generar_index', 'generar_docs']
+
+    def generar_index(self, request, queryset):
+        indices = []
+        for obj in queryset:
+            for i in obj.indices():
+                indices.append(i)
+        ctx = {'indices': indices}
+        return render_to_response('quickdocs/indices.html',
+            ctx, context_instance=RequestContext(request))
+
+    def generar_docs(self, request, queryset):
+        for obj in queryset:
+            obj.generar_documentos()
+
 admin.site.register(Expediente, expediente_admin)
 
 
@@ -40,9 +44,9 @@ admin.site.register(Producto, producto_admin)
 
 
 class indice_admin(ImportExportModelAdmin):
-    list_display = ('indice', 'descripcion')
-    search_fields = ('indice', 'descripcion')
-    list_filter = ('indice_superior',)
+    list_display = ('code', 'indice', 'name', 'tipo')
+    search_fields = ('indice', 'code', 'name')
+    list_filter = ('tipo',)
 admin.site.register(Indice, indice_admin)
 
 
@@ -59,3 +63,12 @@ class importacion_admin(ImportExportModelAdmin):
     "integrar al sistema los registros seleccionados"
 
 admin.site.register(Importacion, importacion_admin)
+
+
+class documento_admin(admin.ModelAdmin):
+    list_display = ('code', 'expediente', 'numero', 'indice', 'producto',
+        'documento')
+    list_editable = ('documento',)
+    search_fields = ('code',)
+
+admin.site.register(Documento, documento_admin)
