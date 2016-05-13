@@ -6,6 +6,7 @@ import pyPdf
 import string
 import random
 from quickdoc.models import *
+from multifilefield.models import MultiFileField
 
 
 def get_media_url(model, filename):
@@ -197,7 +198,7 @@ def get_path(indexacion, filename):
 
 class Indexacion(models.Model):
     fecha = models.DateField(auto_now_add=True, null=True)
-    archivos = models.FileField(upload_to=get_path, null=True, blank=True)
+    archivos = MultiFileField(upload_to=get_path, null=True, blank=True)
     cliente = models.ForeignKey(Expediente, null=True)
     producto = models.ForeignKey(Producto, null=True)
     carpeta = models.CharField(max_length=8, null=True)
