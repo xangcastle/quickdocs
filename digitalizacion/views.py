@@ -71,8 +71,10 @@ def autocomplete_pod(request):
     if request.is_ajax:
         model = Documento
         result = []
-        qs = model.objects.filter(code__istartswith=request.GET.get('term', '')
-            )
+        indexacion = Indexacion.objects.get(id=int(request.GET.get('id', '')))
+        code = indexacion.cliente.codigo + str(indexacion.numero) + \
+        request.GET.get('term', '')
+        qs = model.objects.filter(code__istartswith=code)
         for obj in qs:
             obj_json = {}
             obj_json['label'] = str('%s | %s' % (

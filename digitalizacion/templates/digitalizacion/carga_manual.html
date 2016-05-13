@@ -34,7 +34,7 @@
     $( document ).ready(function() {
         $('#code').autocomplete({
                                 minLength: 4,
-                                source: "{% url 'autocomplete_pod' %}",
+                                source: "{% url 'autocomplete_pod' %}?id=" + $("#id").val(),
                                 select: function( event, ui ) {
                                     var c = $("#comprobante")
                                     var code = ui.item.value;

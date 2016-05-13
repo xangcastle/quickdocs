@@ -46,8 +46,12 @@ class indexacion_admin(ImportExportModelAdmin):
     date_hierarchy = "fecha"
     list_display = ('fecha', 'carga_manual',
         'carpeta', 'path')
-    fields = ('cliente', 'producto', 'archivos', 'make_ocr')
+    fields = ('cliente', 'producto', 'numero', 'archivos', 'make_ocr')
     actions = ['action_indexar']
+    raw_id_fields = ('cliente', 'producto')
+    autocomplete_lookup_fields = {
+        'fk': ['cliente', 'producto'],
+        }
 
     def action_indexar(self, request, queryset):
         for obj in queryset:

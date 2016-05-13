@@ -119,6 +119,11 @@ class base_expediente(models.Model):
     tipo = models.CharField(max_length=25, null=True,
         verbose_name="Tipo Documento", choices=TIPOS_PERSONAS)
 
+    @staticmethod
+    def autocomplete_search_fields():
+        return ("codigo__iexact", "identificacion__iexact",
+            "nombre__icontains",)
+
     class Meta:
         abstract = True
 
