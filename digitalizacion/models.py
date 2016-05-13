@@ -198,8 +198,8 @@ def get_path(indexacion, filename):
 class Indexacion(models.Model):
     fecha = models.DateField(auto_now_add=True, null=True)
     archivos = models.FileField(upload_to=get_path, null=True, blank=True)
-    cliente = models.ForeignKey(Expediente)
-    producto = models.ForeignKey(Producto)
+    cliente = models.ForeignKey(Expediente, null=True)
+    producto = models.ForeignKey(Producto, null=True)
     carpeta = models.CharField(max_length=8, null=True)
     make_ocr = models.BooleanField(default=False, verbose_name="hacer ocr")
 
