@@ -5,6 +5,7 @@ import shutil
 import pyPdf
 import string
 import random
+from quickdoc.models import *
 
 
 def get_media_url(model, filename):
@@ -197,6 +198,8 @@ def get_path(indexacion, filename):
 class Indexacion(models.Model):
     fecha = models.DateField(auto_now_add=True, null=True)
     archivos = models.FileField(upload_to=get_path, null=True, blank=True)
+    cliente = models.ForeignKey(Expediente)
+    producto = models.ForeignKey(Producto)
     carpeta = models.CharField(max_length=8, null=True)
     make_ocr = models.BooleanField(default=False, verbose_name="hacer ocr")
 
@@ -240,4 +243,3 @@ class Indexacion(models.Model):
         if not self.carpeta:
             self.carpeta = id_generator()
         super(Indexacion, self).save()
-        preparar_carpeta(self.path())

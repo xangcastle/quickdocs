@@ -181,6 +181,7 @@ class Expediente(base_expediente):
                     expediente=self, producto=p.producto)
                     if p.numero:
                         d.numero = p.numero
+                    d.save()
 
     class Meta:
         verbose_name = "expediente"
@@ -220,6 +221,16 @@ class base_documento(models.Model):
 class Documento(base_documento):
     indice = models.ForeignKey(Indice, null=True)
     producto = models.ForeignKey('Producto', null=True)
+
+    def get_code(self):
+        code = self.expediente.codigo + self.producto.numero \
+        + self.indice.indice
+        return code
+
+    def save(self, *args, **kwars):
+        if not self.code:
+            self.code = self.get_code()
+        super(Documento, self).save()
 
 
 class Producto(Entidad):

@@ -5,22 +5,49 @@ from .models import *
 import json
 from django.http.response import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+
+
+def get_ruta(paquete):
+    carpeta_madre = paquete.expediente.codigo
+    ruta = os.path.join('EXPEDIENTES', carpeta_madre)
+    return ruta
+
+
+def generar_ruta_comprobante(paquete, filename):
+        extension = os.path.splitext(filename)[1][1:]
+        nombre = paquete.indice.indice
+        nombre_archivo = '{}.{}'.format(nombre, extension)
+        ruta = os.path.join(get_ruta(paquete), nombre_archivo)
+        try:
+            os.remove(os.path.join(settings.MEDIA_ROOT, ruta))
+        except:
+            pass
+        return ruta
+
+
+def cargar_comprobante(paquete, path):
+    p = Documento.objects.get(id=paquete.id)
+    p.documento.name = generar_ruta_comprobante(paquete, 'archivo.pdf')
+    p.save()
+    ruta = os.path.join(settings.MEDIA_ROOT, get_ruta(p))
+    if not os.path.exists(ruta):
+        os.makedirs(ruta)
+    os.rename(path, os.path.join(settings.MEDIA_ROOT,
+    p.documento.path))
+    return p
 
 
 @csrf_exempt
 def cargar_pod(request):
     data = {'mensaje': "carga correcta"}
     c = request.GET.get('code', '00000000000')
-    #print str(c)
-    p = comprobacion(c[:-6], c[-6:-4], c[-4:-2], '20' + c[-2:])
-    #print p
+    p = Documento.objects.get(code=c)
     if p:
         path = settings.MEDIA_ROOT + str(
             request.GET.get('path', '')).replace('media/', '')
-        #print path
+        path = path.replace('//', '/')
         p = cargar_comprobante(p, path)
-        p.indexacion = int(request.GET.get('id', ''))
-        p.exportado = False
         p.save()
     else:
         data['mensaje'] = "carga_incorrecta"
@@ -42,19 +69,17 @@ def carga_manual(request, id):
 
 def autocomplete_pod(request):
     if request.is_ajax:
-        model = Pod
+        model = Documento
         result = []
-
-        qs = model.objects.filter(
-            Q(barra__istartswith=request.GET.get('term', ''))
+        qs = model.objects.filter(code__istartswith=request.GET.get('term', '')
             )
         for obj in qs:
             obj_json = {}
             obj_json['label'] = str('%s | %s' % (
-                obj.cliente.encode('ascii', 'ignore'), obj.consecutivo))
-            obj_json['value'] = str(obj.name_file())
+                obj.expediente.nombre.encode('ascii', 'ignore'),
+                obj.indice.indice))
+            obj_json['value'] = str(obj.code)
             result.append(obj_json)
-
         data = json.dumps(result)
     else:
         data = 'fail'
