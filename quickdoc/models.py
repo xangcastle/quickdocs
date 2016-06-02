@@ -157,8 +157,10 @@ class Expediente(base_expediente):
                     i['indice'] = d.indice.indice
                     i['nombre'] = d.indice.name
                     if d.documento:
+                        i['con_imagen'] = True
                         i['url'] = d.documento.url
                     else:
+                        i['con_imagen'] = False
                         i['url'] = "#"
                     obj['indices'].append(i)
                 data.append(obj)

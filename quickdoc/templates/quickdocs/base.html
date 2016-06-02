@@ -46,7 +46,11 @@
                                     <div class="panel-body">
                                         <ul>
                                             {% for i in p.indices %}
+                                            {% if i.con_imagen %}
                                             <li><a onclick='mostrar("{{ i.url }}")'>{{ i.indice }} {{ i.nombre }}</a></li>
+                                            {% else %}
+                                            <li>{{ i.indice }} {{ i.nombre }}</li>
+                                            {% endif %}
                                             {% endfor %}
                                         </ul>
                                     </div>
