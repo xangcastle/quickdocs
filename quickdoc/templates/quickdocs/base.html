@@ -12,9 +12,20 @@
         <link rel="stylesheet" href="/static/quickdoc/css/bootstrap-theme.min.css">
         <script>
             function mostrar(ruta){
-                $('#documento').empty().append('<iframe src="'+ ruta +'" width="1200" height="1000"></iframe>');
+                var panel  = $('#documento').empty();
+                if (ruta!="#") {
+                    panel.append('<iframe src="'+ ruta +'" width="1200" height="1000"></iframe>');
+                }
+
             }
         </script>
+        <style>
+        a {
+            color: #337ab7;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        </style>
     </head>
     <body>
         <div class="container-fluid">
