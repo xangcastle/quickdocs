@@ -201,6 +201,7 @@ class Indexacion(models.Model):
     archivos = MultiFileField(upload_to=get_path, null=True, blank=True)
     cliente = models.ForeignKey(Expediente, null=True)
     producto = models.ForeignKey(Producto, null=True)
+    numero_new = models.CharField(max_length=25, null=True)
     numero = models.IntegerField(null=True)
     carpeta = models.CharField(max_length=8, null=True)
     make_ocr = models.BooleanField(default=False, verbose_name="hacer ocr")
