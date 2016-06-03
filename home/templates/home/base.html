@@ -14,6 +14,7 @@
     <script src="/static/home/bootstrap/js/bootstrap.min.js"></script>
     <script src="/static/home/js/sb-admin-2.js"></script>
     <script src="/static/home/js/metisMenu.js"></script>
+    {% block extrahead %}{% endblock extrahead %}
 </head>
 
 <body>
@@ -230,7 +231,7 @@
                 <ul class="dropdown-menu dropdown-user">
                     <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
                     </li>
-                    <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                    <li><a href="/admin"><i class="fa fa-gear fa-fw"></i> Settings</a>
                     </li>
                     <li class="divider"></li>
                     <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
@@ -241,24 +242,14 @@
             <!-- /.dropdown -->
         </ul>
         <!-- /.navbar-top-links -->
-
+    <form action="." method="POST">
+    {% csrf_token %}
         <div class="navbar-default sidebar" role="navigation">
             <div style="height: 1px;" aria-expanded="false" class="sidebar-nav navbar-collapse">
                 <ul class="nav in" id="side-menu">
                 {% block sitebar %}
-                    <li class="sidebar-search">
-                        <div class="input-group custom-search-form">
-                            <input class="form-control" placeholder="Search..." type="text">
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" type="button">
-                                    <i class="fa fa-search"></i>
-                                </button>
-                            </span>
-                        </div>
-                        <!-- /input-group -->
-                    </li>
                     <li>
-                        <a class="active" href="#"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
+                        <a class="" href="/home/expediente"><i class="fa fa-dashboard fa-fw"></i> Consulta de Expedientes</a>
                     </li>
                     <li>
                         <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Charts<span class="fa arrow"></span></a>
@@ -354,6 +345,8 @@
     <div style="min-height: 608px;" id="page-wrapper">
         {% block content %}{% endblock content %}
     </div>
+        {% block modal %}{% endblock modal %}
+    </form>
     <script type="text/javascript">
         {% block javascript %}{% endblock javascript %}
     </script>

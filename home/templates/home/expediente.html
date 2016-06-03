@@ -1,5 +1,10 @@
 {% extends "/home/base.html" %}
 
+{% block extrahead %}
+<script src="/static/home/datatables/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="/static/home/datatables/css/jquery.dataTables.min.css">
+{% endblock extrahead %}
+
 {% block css %}
 .clickable {
     cursor: pointer;
@@ -10,8 +15,11 @@
 }
 {% endblock css %}
 
-{% block sitebar %}
 {% if expediente %}
+{% block sitebar %}
+<li>
+    <a class="active" href="/home/expediente"><i class="fa fa-dashboard fa-fw"></i> Consulta de Expedientes</a>
+</li>
 {% for s in expediente.render_data %}
 <li>
     <a href="#"><i class="fa fa-sitemap fa-fw"></i> {{ s.name }}<span class="fa arrow"></span></a>
@@ -38,21 +46,50 @@
     </ul>
 </li>
 {% endfor %}
-{% else %}
-<li class="sidebar-search">
-    <div class="input-group custom-search-form">
-        <input class="form-control" placeholder="Buscar Cliente" type="text" name="buscador">
-        <span class="input-group-btn">
-            <button class="btn btn-default" type="submit">
-                <i class="fa fa-search"></i>
-            </button>
-        </span>
-    </div>
-</li>
-{% endif %}
 {% endblock sitebar %}
+{% endif %}
 
-{% block content %}<div id="documento"></div>{% endblock content %}
+{% block content %}
+<div class="row">
+    <div class="col-sm-12">
+        <br/>
+        <div class="panel panel-default" id="documento">
+            <div class="panel-heading">
+                Listado de Expedientes Digitalizados
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div class="dataTable_wrapper">
+                    <table id="table" class="display" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Codigo</th>
+                            <th>Nombre</th>
+                            <th>Identificacion</th>
+                            <th>Tipo</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Id</th>
+                            <th>Codigo</th>
+                            <th>Nombre</th>
+                            <th>Identificacion</th>
+                            <th>Tipo</th>
+                        </tr>
+                    </tfoot>
+                </table>
+                </div>
+                <!-- /.table-responsive -->
+            </div>
+            <!-- /.panel-body -->
+        </div>
+        <!-- /.panel -->
+    </div>
+</div>
+</div>
+{% endblock content %}
 
 {% block javascript %}
 function mostrar(ruta){
@@ -61,4 +98,22 @@ function mostrar(ruta){
         panel.append('<iframe src="'+ ruta +'" width="100%" height="1000"></iframe>');
     }
 }
+var ver_expediente = function(){
+    window.location.href = "/home/expediente/?id=" + $(this).find('td').html();
+}
+$(document).on('ready', function(){
+    $('#table').DataTable( {
+        "ajax": "/home/tableExpediente/",
+        "columns": [
+            { "data": "id" },
+            { "data": "codigo" },
+            { "data": "nombre" },
+            { "data": "identificacion" },
+            { "data": "tipo" }
+        ]
+    } );
+    $("#table").on("dblclick", "tbody tr", ver_expediente);
+});
+
 {% endblock javascript %}
+

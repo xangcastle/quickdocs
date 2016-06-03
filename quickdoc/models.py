@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import Max
+from django.forms.models import model_to_dict
 
 
 def get_media_url(model, filename):
@@ -169,6 +170,11 @@ class Expediente(base_expediente):
                     seccion['productos'].append(producto)
                 data.append(seccion)
         return data
+
+    def to_json(self):
+        obj = model_to_dict(self)
+        obj['indice'] = self.render_data()
+        return obj
 
     def indices(self):
         indices = []
