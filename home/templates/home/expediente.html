@@ -14,6 +14,24 @@
     cursor: not-allowed;
 }
 {% endblock css %}
+{% block tareas %}
+<li>
+    <a href="#">
+        <div>
+            <p>
+                <strong>Imagenes Procesadas</strong>
+                <span class="pull-right text-muted">{{ estadisticas.avance }}% Complete</span>
+            </p>
+            <div class="progress progress-striped active">
+                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ estadisticas.avance }}" aria-valuemin="0" aria-valuemax="100"
+                    style="width: {{ estadisticas.avance }}%">
+                    <span class="sr-only">{{ estadisticas.avance }}% Complete (success)</span>
+                </div>
+            </div>
+        </div>
+    </a>
+</li>
+{% endblock tareas %}
 
 {% if expediente %}
 {% block sitebar %}

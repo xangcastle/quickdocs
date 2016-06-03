@@ -6,6 +6,16 @@ from django.forms.models import model_to_dict
 import json
 
 
+def estadisticas(view, request):
+    context = view.get_context_data()
+    docs = Documento.objects.all()
+    context['estadisticas'] = {'total': docs.count(),
+        'escaneados': docs.count() - docs.filter(documento="").count(),
+        'avance': ((docs.count() - docs.filter(documento="").count())
+        * 100) / docs.count()}
+    return context
+
+
 class index(TemplateView):
     template_name = "home/base.html"
 
@@ -14,7 +24,7 @@ class expediente(TemplateView):
     template_name = "home/expediente.html"
 
     def get(self, request, *args, **kwargs):
-        context = self.get_context_data()
+        context = estadisticas(self, request)
         codigo = request.GET.get('codigo', None)
         if codigo:
             context['expediente'] = Expediente.objects.get(codigo=codigo)
