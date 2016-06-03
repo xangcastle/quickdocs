@@ -15,9 +15,9 @@ class expediente(TemplateView):
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data()
-        pk = request.GET.get('id', None)
-        if pk:
-            context['expediente'] = Expediente.objects.get(id=pk)
+        codigo = request.GET.get('codigo', None)
+        if codigo:
+            context['expediente'] = Expediente.objects.get(codigo=codigo)
         return super(expediente, self).render_to_response(context)
 
     def post(self, request, *args, **kwargs):

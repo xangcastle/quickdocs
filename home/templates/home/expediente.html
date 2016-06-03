@@ -51,18 +51,19 @@
 
 {% block content %}
 {% if expediente %}
-<div id="documento"></div>
-<div class="form-group">
-    <label for="codigo">Codigo del Cliente</label>
-    <input type="text" class="form-control" id="codigo" placeholder="CODIGO" readonly name="codigo" value="{{expediente.codigo}}">
-</div>
-<div class="form-group">
-    <label for="nombre">Nombre</label>
-    <input type="text" class="form-control" id="nombre" placeholder="NOMBRE" name="nombre" readonly value="{{expediente.nombre}}">
-</div>
-<div class="form-group">
-    <label for="identificacion">Identificacion</label>
-    <input type="text" class="form-control" id="identificacion" placeholder="IDENTIFICACION" name="identificacion" readonly value="{{expediente.identificacion}}">
+<div id="documento">
+    <div class="form-group">
+        <label for="codigo">Codigo del Cliente</label>
+        <input type="text" class="form-control" id="codigo" placeholder="CODIGO" readonly name="codigo" value="{{expediente.codigo}}">
+    </div>
+    <div class="form-group">
+        <label for="nombre">Nombre</label>
+        <input type="text" class="form-control" id="nombre" placeholder="NOMBRE" name="nombre" readonly value="{{expediente.nombre}}">
+    </div>
+    <div class="form-group">
+        <label for="identificacion">Identificacion</label>
+        <input type="text" class="form-control" id="identificacion" placeholder="IDENTIFICACION" name="identificacion" readonly value="{{expediente.identificacion}}">
+    </div>
 </div>
 {% else %}
 <div class="row">
@@ -78,7 +79,6 @@
                     <table id="table" class="display" cellspacing="0" width="100%">
                     <thead>
                         <tr>
-                            <th>Id</th>
                             <th>Codigo</th>
                             <th>Nombre</th>
                             <th>Identificacion</th>
@@ -87,7 +87,6 @@
                     </thead>
                     <tfoot>
                         <tr>
-                            <th>Id</th>
                             <th>Codigo</th>
                             <th>Nombre</th>
                             <th>Identificacion</th>
@@ -108,20 +107,21 @@
 {% endblock content %}
 
 {% block javascript %}
+var ventana_ancho = $(window).width();
+var ventana_alto = $(window).height();
 function mostrar(ruta){
     var panel  = $('#documento').empty();
     if (ruta!="#") {
-        panel.append('<iframe src="'+ ruta +'" width="100%" height="1000"></iframe>');
+        panel.append('<iframe src="'+ ruta +'" width="100%" height="'+ventana_alto * 0.9+'"></iframe>');
     }
 }
 var ver_expediente = function(){
-    window.location.href = "/home/expediente/?id=" + $(this).find('td').html();
+    window.location.href = "/home/expediente/?codigo=" + $(this).find('td').html();
 }
 $(document).on('ready', function(){
     $('#table').DataTable( {
         "ajax": "/home/tableExpediente/",
         "columns": [
-            { "data": "id" },
             { "data": "codigo" },
             { "data": "nombre" },
             { "data": "identificacion" },
