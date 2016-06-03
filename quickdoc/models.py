@@ -226,10 +226,10 @@ class Indice(Entidad):
 
 
 class base_documento(models.Model):
-    numero = models.CharField(max_length=25, null=True)
+    numero = models.CharField(max_length=125, null=True)
     expediente = models.ForeignKey(Expediente, null=True)
     documento = models.FileField(upload_to=get_media_url, null=True, blank=True)
-    code = models.CharField(max_length=25, null=True)
+    code = models.CharField(max_length=125, null=True)
 
     class Meta:
         abstract = True
