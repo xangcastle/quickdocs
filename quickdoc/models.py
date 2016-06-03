@@ -137,7 +137,7 @@ class Expediente(base_expediente):
         return Documento.objects.filter(expediente=self)
 
     def ver_expediente(self):
-        return '<a href="/quickdoc/expediente/%s/" target="blank">Ver expediente</a>' % (self.id)
+        return '<a href="/home/expediente/?id=%s" target="blank">Ver expediente</a>' % (self.id)
     ver_expediente.allow_tags = True
 
     def productos(self):
@@ -146,24 +146,28 @@ class Expediente(base_expediente):
     def render_data(self):
         data = []
         if self.documentos():
-            ps = self.documentos().order_by('producto').distinct('producto')
-            for p in ps:
-                obj = {}
-                obj['seccion'] = p.producto.name
-                obj['indices'] = []
-                ds = self.documentos().filter(producto=p.producto)
-                for d in ds:
-                    i = {}
-                    i['indice'] = d.indice.indice
-                    i['nombre'] = d.indice.name
-                    if d.documento:
-                        i['con_imagen'] = True
-                        i['url'] = d.documento.url
-                    else:
-                        i['con_imagen'] = False
-                        i['url'] = "#"
-                    obj['indices'].append(i)
-                data.append(obj)
+            secciones = self.documentos().order_by(
+                'producto').distinct('producto')
+            for s in secciones:
+                seccion = {'name': s.producto.name, 'productos': []}
+                productos = self.documentos().filter(
+                    producto=s.producto).order_by('numero').distinct('numero')
+                for p in productos:
+                    producto = {'numero': p.numero, 'documentos': []}
+                    documentos = self.documentos().filter(producto=p.producto,
+                        numero=p.numero)
+                    for d in documentos:
+                        documento = {'indice': d.indice.indice,
+                            'nombre': d.indice.name}
+                        if d.documento:
+                            documento['con_imagen'] = True
+                            documento['url'] = d.documento.url
+                        else:
+                            documento['con_imagen'] = False
+                            documento['url'] = "#"
+                        producto['documentos'].append(documento)
+                    seccion['productos'].append(producto)
+                data.append(seccion)
         return data
 
     def indices(self):

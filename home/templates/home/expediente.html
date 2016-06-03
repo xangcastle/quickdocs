@@ -1,0 +1,64 @@
+{% extends "/home/base.html" %}
+
+{% block css %}
+.clickable {
+    cursor: pointer;
+}
+.no-clickable,.no-clickable:hover{
+    color: black;
+    cursor: not-allowed;
+}
+{% endblock css %}
+
+{% block sitebar %}
+{% if expediente %}
+{% for s in expediente.render_data %}
+<li>
+    <a href="#"><i class="fa fa-sitemap fa-fw"></i> {{ s.name }}<span class="fa arrow"></span></a>
+    <ul class="nav nav-second-level collapse">
+    {% for p in s.productos %}
+        <li>
+            <a href="#">{{ p.numero }}<span class="fa arrow"></span></a>
+            <ul class="nav nav-third-level collapse">
+            {% for d in p.documentos %}
+                <li>
+                    <a
+                        {% if d.con_imagen %}
+                        onclick='mostrar("{{ d.url }}")'
+                        class="clickable"
+                        {% else%}
+                        class="no-clickable"
+                        {% endif %}>
+                        {{ d.indice }} {{ d.nombre }}</a>
+                </li>
+            {% endfor %}
+            </ul>
+        </li>
+    {% endfor %}
+    </ul>
+</li>
+{% endfor %}
+{% else %}
+<li class="sidebar-search">
+    <div class="input-group custom-search-form">
+        <input class="form-control" placeholder="Buscar Cliente" type="text" name="buscador">
+        <span class="input-group-btn">
+            <button class="btn btn-default" type="submit">
+                <i class="fa fa-search"></i>
+            </button>
+        </span>
+    </div>
+</li>
+{% endif %}
+{% endblock sitebar %}
+
+{% block content %}<div id="documento"></div>{% endblock content %}
+
+{% block javascript %}
+function mostrar(ruta){
+    var panel  = $('#documento').empty();
+    if (ruta!="#") {
+        panel.append('<iframe src="'+ ruta +'" width="100%" height="1000"></iframe>');
+    }
+}
+{% endblock javascript %}

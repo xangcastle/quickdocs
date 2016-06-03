@@ -2,9 +2,11 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.conf import settings
+from home.views import index
 
 urlpatterns = patterns('',
-    url(r'^$', 'quickdoc.views.home', name='home'),
+    url(r'^$', index.as_view(), name='home'),
+    url(r'^home/', include('home.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^adminactions/', include('adminactions.urls')),
