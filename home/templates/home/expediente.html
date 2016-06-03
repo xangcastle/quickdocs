@@ -50,6 +50,21 @@
 {% endif %}
 
 {% block content %}
+{% if expediente %}
+<div id="documento"></div>
+<div class="form-group">
+    <label for="codigo">Codigo del Cliente</label>
+    <input type="text" class="form-control" id="codigo" placeholder="CODIGO" readonly name="codigo" value="{{expediente.codigo}}">
+</div>
+<div class="form-group">
+    <label for="nombre">Nombre</label>
+    <input type="text" class="form-control" id="nombre" placeholder="NOMBRE" name="nombre" readonly value="{{expediente.nombre}}">
+</div>
+<div class="form-group">
+    <label for="identificacion">Identificacion</label>
+    <input type="text" class="form-control" id="identificacion" placeholder="IDENTIFICACION" name="identificacion" readonly value="{{expediente.identificacion}}">
+</div>
+{% else %}
 <div class="row">
     <div class="col-sm-12">
         <br/>
@@ -89,6 +104,7 @@
     </div>
 </div>
 </div>
+{% endif %}
 {% endblock content %}
 
 {% block javascript %}
