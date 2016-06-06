@@ -21,11 +21,7 @@ class expediente_admin(admin.ModelAdmin):
     actions = ['generar_index', 'generar_docs']
 
     def generar_index(self, request, queryset):
-        indices = []
-        for obj in queryset:
-            for i in obj.indices():
-                indices.append(i)
-        ctx = {'indices': indices}
+        ctx = {'queryset': queryset}
         return render_to_response('quickdocs/indices.html',
             ctx, context_instance=RequestContext(request))
 

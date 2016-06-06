@@ -1,14 +1,28 @@
-<style>
-.etiqueta{
-    height: 10mm;
-    width: 70mm;
-    display: inline;
-    padding: 5mm;
-    margin: 5mm;
-    border-style: dashed;
-    }
-</style>
 
-{% for i in indices %}
-<div class="etiqueta">code {{ i.code }}{{ i.numero }}{{ i.indice }}</div>
+<link href='/static/quickdoc/css/fonts.css' rel='stylesheet' type='text/css'>
+
+<style>
+.code_per {
+    margin-top: 2mm;
+    margin-left: 8mm;
+    height: 4mm;
+    font-size: 13pt;
+    font-style: normal;
+    color: #000000;
+    font-family: 'PT Sans', sans-serif;
+    font-weight: 500;
+    padding: 20px;
+}
+</style>
+{% for cliente in queryset %}
+<table>
+<tbody>
+{% for i in cliente.etiquetas %}
+<tr>
+<td class="code_per">{{ i.code }}</td>
+<td>{{ i.indice }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
 {% endfor %}

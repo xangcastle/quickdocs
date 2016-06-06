@@ -1,0 +1,24 @@
+.navbar-default {
+    background-color: #146545;
+}
+.navbar-default .navbar-brand{
+    color: white;
+}
+a {
+    color: white;
+}
+.nav>li>a {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    background-color: #146545;
+}
+
+.sidebar ul li a.active {
+    background-color: #146545;
+}
+
+.nav .open>a, .nav .open>a:focus, .nav .open>a:hover {
+    background-color: #018146;
+    border-color: #018146;
+}

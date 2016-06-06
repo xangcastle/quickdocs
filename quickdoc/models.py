@@ -176,16 +176,11 @@ class Expediente(base_expediente):
         obj['indice'] = self.render_data()
         return obj
 
-    def indices(self):
+    def etiquetas(self):
         indices = []
-        if self.productos():
-            for p in self.productos():
-                for i in p.producto.indices.all():
-                    d = {'indice': i.code, 'descripcion': i.name,
-                        'numero': p.numero, 'code': self.codigo,
-                        'barra': str(self.codigo) + str(p.numero) + str(i.code),
-                        'indice_id': i.id}
-                    indices.append(d)
+        self.generar_documentos()
+        for d in self.documentos():
+            indices.append({'code': d.code, 'indice': d.indice.indice})
         return indices
 
     def generar_documentos(self):

@@ -2,7 +2,19 @@
 
 {% block extrahead %}
 <script src="/static/home/datatables/js/jquery.dataTables.min.js"></script>
+<script src="/static/home/datatables/js/dataTables.buttons.min.js"></script>
 <link rel="stylesheet" href="/static/home/datatables/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="/static/home/datatables/css/buttons.dataTables.min.css">
+
+<script src="/static/home/datatables/js/buttons.flash.min.js"></script>
+<script src="/static/home/datatables/js/jszip.min.js"></script>
+
+<script src="/static/home/datatables/js/pdfmake.min.js"></script>
+<script src="/static/home/datatables/js/vfs_fonts.js"></script>
+<script src="/static/home/datatables/js/buttons.html5.min.js"></script>
+<script src="/static/home/datatables/js/buttons.print.min.js"></script>
+
+
 {% endblock extrahead %}
 
 {% block css %}
@@ -144,9 +156,15 @@ $(document).on('ready', function(){
             { "data": "nombre" },
             { "data": "identificacion" },
             { "data": "tipo" }
-        ]
+        ],
+        "dom": "Bfrtip",
+        "lengthMenu": [
+            [ 10, 25, 50, -1 ],
+            [ '10 rows', '25 rows', '50 rows', 'Show all' ]
+        ],
+        "buttons": ['pageLength', 'excel', 'pdf']
     } );
-    $("#table").on("dblclick", "tbody tr", ver_expediente);
+    $("#table").on("click", "tbody tr", ver_expediente);
 });
 
 {% endblock javascript %}

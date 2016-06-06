@@ -48,35 +48,36 @@ def extract_content(pdf):
     return content
 
 
-def extract_cedula(content):
-    i = content.find("IDENTIFICACION #") + 16
-    f = i + 14
-    code = limpiar_espacios(content[i:f])
+def extract_code(content):
+    code = []
+    todo = eliminar_letras(content).split(" ")
+    for n in todo:
+        if len(n) >= 15:
+            code.append(n)
     return code
 
 
-def comprobacion(cedula):
+def comprobacion(code):
     p = None
-    queryset = Empleado.objects.filter(cedula=cedula)
+    queryset = Documento.objects.filter(code=code)
     if queryset.count() > 0:
         p = queryset[0]
     if p:
-        print p.nombre.encode('ascii', 'ignore')
         return p
     else:
         return None
 
 
-def cargar_ecuenta(empleado, path):
-    if empleado:
-        empleado.ecuenta.name = get_media_url(empleado, 'archivo.pdf')
-        empleado.save()
-        ruta = empleado.ecuenta.path
+def cargar_archivo(documento, path):
+    if documento:
+        documento.documento.name = get_media_url(documento, 'archivo.pdf')
+        documento.save()
+        ruta = documento.documento.path
         carpeta = ruta.replace(os.path.basename(ruta), '')
         if not os.path.exists(carpeta):
             os.makedirs(carpeta)
         os.rename(path, os.path.join(settings.MEDIA_ROOT,
-        empleado.ecuenta.path))
+        documento.documento.path))
 
 
 def descomponer(path):
@@ -110,10 +111,11 @@ def indexar(path, indexacion):
         path = make_ocr(path)
     pdf = pyPdf.PdfFileReader(file(path, "r"))
     content = extract_content(pdf)
-    cedula = extract_cedula(content)
-    if cedula:
-        e = comprobacion(cedula)
-        cargar_ecuenta(e, path)
+    code = extract_code(content)
+    if len(code) > 0:
+        for c in code:
+            d = comprobacion(c)
+        cargar_archivo(d, path)
 
 
 def preparar_carpeta(path):
@@ -199,10 +201,10 @@ def get_path(indexacion, filename):
 class Indexacion(models.Model):
     fecha = models.DateField(auto_now_add=True, null=True)
     archivos = MultiFileField(upload_to=get_path, null=True, blank=True)
-    cliente = models.ForeignKey(Expediente, null=True)
-    producto = models.ForeignKey(Producto, null=True)
-    numero = models.CharField(max_length=25, null=True)
-    carpeta = models.CharField(max_length=8, null=True)
+    cliente = models.ForeignKey(Expediente, null=True, blank=True)
+    producto = models.ForeignKey(Producto, null=True, blank=True)
+    numero = models.CharField(max_length=25, null=True, blank=True)
+    carpeta = models.CharField(max_length=8, null=True, blank=True)
     make_ocr = models.BooleanField(default=False, verbose_name="hacer ocr")
 
     def path(self):
