@@ -131,6 +131,7 @@ def preparar_carpeta(path):
 
 
 def indexar_carpeta(indexacion):
+    path = indexacion.path()
     archivos = sorted(os.listdir(path))
     for a in archivos:
         if a[-3:] == 'pdf':
