@@ -131,13 +131,11 @@ def preparar_carpeta(path):
 
 
 def indexar_carpeta(indexacion):
-    path = indexacion.path()
-    if preparar_carpeta(path):
-        archivos = sorted(os.listdir(path))
-        for a in archivos:
-            if a[-3:] == 'pdf':
-                path = os.path.join(indexacion.path(), a)
-                indexar(path, indexacion)
+    archivos = sorted(os.listdir(path))
+    for a in archivos:
+        if a[-3:] == 'pdf':
+            path = os.path.join(indexacion.path(), a)
+            indexar(path, indexacion)
         #os.system("rm -rf %s" % path)
 
 
