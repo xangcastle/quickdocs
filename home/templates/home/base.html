@@ -9,6 +9,7 @@
     <link href="/static/home/css/metisMenu.min.css" rel="stylesheet">
     <link href="/static/home/css/font-awesome.css" rel="stylesheet">
     <link href="/static/home/css/sb-admin-2.css" rel="stylesheet">
+    <link href="/static/home/css/quickdoc.css" rel="stylesheet">
     <style>{% block css %}{% endblock css %}</style>
     <script src="/static/home/jquery/jquery-2.2.4.min.js"></script>
     <script src="/static/home/bootstrap/js/bootstrap.min.js"></script>
@@ -26,7 +27,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-            <a class="navbar-brand" href="/">Sistema QuickDocs</a>
+            <a class="navbar-brand" href="/"><img src="/static/home/imgs/logo_banpro.gif" class="logo"/></a>
         </div>
         <!-- /.navbar-header -->
 
@@ -210,15 +211,25 @@
         </div>
         <!-- /.navbar-static-side -->
     </nav>
-    <div style="min-height: 608px;" id="page-wrapper">
+    <div id="page-wrapper">
         {% block content %}
-
+        <div class="alert alert-success">
+        Sistema de Digilalizacion de Expedientes...
+        </div>
+        <div class="programm">
+        QuickDocs V1.0
+        </div>
         {% endblock content %}
     </div>
         {% block modal %}{% endblock modal %}
     </form>
     <script type="text/javascript">
-        {% block javascript %}{% endblock javascript %}
+        var ventana_ancho = $(window).width();
+        var ventana_alto = $(window).height();
+        $('.navbar-default .sidebar').css('min-height', (ventana_alto*0.9)+'px');
+        $('.navbar-default .sidebar').css('overflow', 'auto');
+        {% block javascript %}
+        {% endblock javascript %}
     </script>
 </body>
 

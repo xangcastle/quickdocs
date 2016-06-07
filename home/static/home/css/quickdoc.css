@@ -1,8 +1,14 @@
 .navbar-default {
-    background-color: #146545;
+    background-color: #008444;
 }
 .navbar-default .navbar-brand{
     color: white;
+    background-color: white;
+    min-width: 250px;
+}
+.navbar-default .navbar-brand:hover{
+    color: white;
+    background-color: white;
 }
 a {
     color: white;
@@ -11,14 +17,29 @@ a {
     position: relative;
     display: block;
     padding: 10px 15px;
-    background-color: #146545;
+    background-color: #008444;
 }
 
 .sidebar ul li a.active {
-    background-color: #146545;
+    background-color: rgb(129, 196, 74);
 }
 
 .nav .open>a, .nav .open>a:focus, .nav .open>a:hover {
-    background-color: #018146;
+    background-color: #24A572;
     border-color: #018146;
+}
+.nav>li>a:focus, .nav>li>a:hover {
+    text-decoration: none;
+    background-color: #018146;
+    color: white;
+}
+.logo{
+    margin-top: -26px;
+    height: 68px;
+}
+.programm {
+    font-size: 150px;
+    font-weight: 800;
+    margin-top: 100px;
+    text-align: center;
 }

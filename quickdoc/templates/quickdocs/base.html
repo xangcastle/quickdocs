@@ -29,24 +29,25 @@
             <div class="well">
                 <div class="row">
                     <div class="col-md-3">
-                {% for p in expediente.render_data %}
+                {% for s in expediente.render_data %}
+                {% for p in s.productos %}
                         <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                             <div class="panel panel-default">
                                 <div class="panel-heading" role="tab" id="headingOne">
                                     <h4 class="panel-title">
                                         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                            {{ p.seccion }}
+                                            {{ s.name }} - {{ p.numero }}
                                         </a>
                                     </h4>
                                 </div>
                                 <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                                     <div class="panel-body">
                                         <ul>
-                                            {% for i in p.indices %}
-                                            {% if i.con_imagen %}
-                                            <li><a onclick='mostrar("{{ i.url }}")'>{{ i.indice }} {{ i.nombre }}</a></li>
+                                            {% for d in p.documentos %}
+                                            {% if d.con_imagen %}
+                                            <li><a onclick='mostrar("{{ d.url }}")'>{{ d.indice }} {{ d.nombre }}</a></li>
                                             {% else %}
-                                            <li>{{ i.indice }} {{ i.nombre }}</li>
+                                            <li>{{ d.indice }} {{ d.nombre }}</li>
                                             {% endif %}
                                             {% endfor %}
                                         </ul>
@@ -54,6 +55,8 @@
                                 </div>
                             </div>
                         </div>
+
+                    {% endfor %}
                     {% endfor %}
                     </div>
                     <div class="col-md-9">
