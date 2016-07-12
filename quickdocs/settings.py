@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = (
     'home',
+    'contabilidad',
+    'segdel',
     'multifilefield',
     'grappelli_dynamic_navbar',
     'grappelli',

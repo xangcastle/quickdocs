@@ -1,0 +1,297 @@
+{% extends "/contabilidad/base.html" %}
+
+{% block extrahead %}
+{{block.super}}
+<script src="/static/home/datatables/js/jquery.dataTables.min.js"></script>
+<script src="/static/home/datatables/js/dataTables.buttons.min.js"></script>
+<link rel="stylesheet" href="/static/home/datatables/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="/static/home/datatables/css/buttons.dataTables.min.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="/static/home/datatables/js/buttons.flash.min.js"></script>
+<script src="/static/home/datatables/js/jszip.min.js"></script>
+<script src="/static/home/bootstrap/js/bootstrap-datepicker.js"></script>
+
+<script src="/static/home/datatables/js/pdfmake.min.js"></script>
+<script src="/static/home/datatables/js/vfs_fonts.js"></script>
+<script src="/static/home/datatables/js/buttons.html5.min.js"></script>
+<script src="/static/home/datatables/js/buttons.print.min.js"></script>
+<script src="/static/home/jquery/jquery-ui.js"></script>
+
+{% endblock extrahead %}
+
+{% block css %}
+
+{% endblock css %}
+
+{% block tareas %}
+<li>
+    <a href="#">
+        <div>
+            <p>
+                <strong>Imagenes Procesadas</strong>
+                <span class="pull-right text-muted">{{ estadisticas.avance }}% Complete</span>
+            </p>
+            <div class="progress progress-striped active">
+                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ estadisticas.avance }}" aria-valuemin="0" aria-valuemax="100"
+                    style="width: {{ estadisticas.avance }}%">
+                    <span class="sr-only">{{ estadisticas.avance }}% Complete (success)</span>
+                </div>
+            </div>
+        </div>
+    </a>
+</li>
+{% endblock tareas %}
+
+
+{% block content %}
+{% if comprobante or nuevo %}
+<div class="panel panel-info">
+<div class="panel-heading">Comprobante de Diario</div>
+  <div class="panel-body">
+      <div class="row">
+    <div class="col-md-6">
+        <input type="hidden" class="form-control" id="id_comprobante" name="id">
+        <div class="form-group">
+            <label for="numero">Numero</label>
+            <input type="text" class="form-control" id="numero" value="{{comprobante.numero}}">
+        </div>
+        <label for="fecha">Fecha</label>
+        <div class="form-group">
+            <div class='input-group date'>
+                <input type='text' class="form-control" name="fecha" value="{{comprobante.fecha}}"  id='fecha'/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="concepto">Concepto</label>
+            <textarea rows="5" class="form-control" id="concepto" name="concepto">{{comprobante.concepto}}</textarea>
+        </div>
+    </div>
+    </div>
+    <div class="row">
+    <div class="form-group">
+        <input type="text" class="form-control" id="buscador" placeholder="BUSCAR CUENTA" autocomplete="off" autofocus="true">
+    </div>
+    </div>
+    <div class="row">
+    <table id="detalle" class="table table-hover table-responsive table-bordered table-striped" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Codigo</th>
+                <th>Nombre</th>
+                <th>Debe</th>
+                <th>Haber</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for m in comprobante.movimientos %}
+            <tr>
+                <td><input type="text" name="mov-code" readonly class="form-control code" value="{{ m.cuenta.code }}"></td>
+                <td><input type="text" name="mov-name" readonly class="form-control name" value="{{ m.cuenta.name }}"></td>
+                <td><input type="text" name="mov-debe" readonly class="form-control debe" value="{{ m.debe }}"></td>
+                <td><input type="text" name="mov-haber" readonly class="form-control haber" value="{{ m.haber }}"></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <th></th>
+                <th>Total</th>
+                <th><input type="text" class="form-control" readonly value="0.00" name="total_debe" id="total_debe"/></th>
+                <th><input type="text" class="form-control" readonly value="0.00" name="total_haber" id="total_haber"/></th>
+            </tr>
+        </tfoot>
+    </table>
+    </div>
+    <button type="submit" class="btn btn-primary">Grabar</button>
+  </div>
+  <div class="panel-footer">DeltaCopiers S.A.</div>
+</div>
+{% else %}
+<div class="row">
+    <div class="col-sm-12">
+        <br/>
+        <div class="panel panel-default" id="documento">
+            <div class="panel-heading">
+                Listado de Documentos no Cerrados
+            </div>
+            <!-- /.panel-heading -->
+            <div class="panel-body">
+                <div class="dataTable_wrapper">
+                    <table id="table" class="display" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Numero</th>
+                            <th>Fecha</th>
+                            <th>Tipo</th>
+                            <th>Concepto</th>
+                            <th>Periodo</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>ID</th>
+                            <th>Numero</th>
+                            <th>Fecha</th>
+                            <th>Tipo</th>
+                            <th>Concepto</th>
+                            <th>Periodo</th>
+                        </tr>
+                    </tfoot>
+                </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endif %}
+{% endblock content %}
+
+{% block modal %}
+<div class="modal fade" id="movimiento-modal" role="dialog">
+    <div class="modal-dialog modal-md">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Detalle de Movimiento Contable</h4>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                      <label for="code">Codigo</label>
+                      <input type="text" class="form-control" id="code" readonly>
+                  </div>
+                  <div class="form-group">
+                      <label for="name">Nombre</label>
+                      <input type="text" class="form-control" id="name" readonly>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                      <label for="debe">Debe</label>
+                      <input type="text" class="form-control" id="debe">
+                  </div>
+                  <div class="form-group">
+                      <label for="haber">Haber</label>
+                      <input type="text" class="form-control" id="haber">
+                  </div>
+                </div>
+              </div>
+            <div class="modal-footer">
+              <div class="alert" id="mensaje"></div>
+              <button type="button" class="btn btn-danger" id="modal_delete">Eliminar</button>
+              <button type="button" class="btn btn-success" id="modal_ok">Aplicar</button>
+            </div>
+          </div>
+  </div>
+</div>
+{% endblock modal %}
+
+{% block javascript %}
+
+  var load_modal = function (code, name, debe, haber){
+      debe || ( debe = 0.00 );
+      haber || ( haber = 0.00 );
+      var modal = $('#movimiento-modal');
+      modal.find('#code').val(code);
+      modal.find('#name').val(name);
+      modal.find('#debe').val(debe);
+      modal.find('#haber').val(haber);
+      modal.modal('show');
+}
+
+var create_row = function(){
+    var modal = $('#movimiento-modal');
+    var row = $('<tr></tr>');
+    row.append($('<td></td>').append('<input type="text" name="mov-code" readonly class="form-control code" value="'+modal.find("#code").val()+'">'));
+    row.append($('<td></td>').append('<input type="text" name="mov-name" readonly class="form-control name" value="'+modal.find("#name").val()+'">'));
+    row.append($('<td></td>').append('<input type="text" name="mov-debe" readonly class="form-control debe" value="'+modal.find("#debe").val()+'">'));
+    row.append($('<td></td>').append('<input type="text" name="mov-haber" readonly class="form-control haber" value="'+modal.find("#haber").val()+'">'));
+    $("#detalle tbody").append(row);
+    modal.modal('hide');
+    calcular();
+}
+var NuevoComprobante = function(){
+    window.location.href = "/contabilidad/comprobantes/?nuevo=True";
+}
+var VerComprobante = function(){
+    window.location.href = "/contabilidad/comprobantes/?id="+$(this).find("td").html();
+}
+var ver_comprobante = function(){
+    console.log("test");
+}
+var totalizar = function(clase){
+    var suma = 0.0;
+    $('#detalle tr .'+clase).each(function(){
+     suma += parseFloat($(this).val());
+    })
+    return suma;
+}
+var calcular = function(){
+    $("#total_debe").val(totalizar('debe'));
+    $("#total_haber").val(totalizar('haber'));
+}
+var complete_cuenta = function () {
+    var _self = $(this);
+    if($.trim($(_self).val()) != '') {
+        $(_self).autocomplete({
+            minLength: 2,
+            source: "/contabilidad/autocomplete_cuenta/",
+            select: function(i, o) {
+                load_modal(o.item.obj.code, o.item.obj.name);
+                }
+        });
+    }
+}
+$(document).on('ready', function(){
+    calcular();
+    $('#table').DataTable( {
+        "ajax": "/contabilidad/tableComprobante/",
+        "columns": [
+            { "data": "id" },
+            { "data": "numero" },
+            { "data": "fecha" },
+            { "data": "tipo" },
+            { "data": "concepto" },
+            { "data": "periodo" },
+        ],
+        "dom": "Bfrtip",
+        "lengthMenu": [
+            [ 10, 25, 50, -1 ],
+            [ '10 rows', '25 rows', '50 rows', 'Show all' ]
+        ],
+        "buttons": ['pageLength', 'excel', 'pdf', {
+            text: 'Reload',
+            action: function ( e, dt, node, config ) {
+                dt.ajax.reload();
+            }
+        },{
+            text: 'Nuevo',
+            action: function ( e, dt, node, config ) {
+                NuevoComprobante();
+            }
+        }]
+    } );
+    $("#table").on("click", "tbody tr", ver_comprobante);
+    $("#buscador").on("keyup", complete_cuenta);
+    $("#modal_ok").on("click", create_row);
+    $('form').keydown(function(event){
+      if(event.keyCode==13){
+        event.preventDefault();
+        return false;
+      }
+    });
+    $("#table tbody").on("click", "tr", VerComprobante)
+    $('#fecha').datepicker();
+});
+
+{% endblock javascript %}
+

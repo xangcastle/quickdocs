@@ -1,0 +1,97 @@
+{% extends "/home/base.html" %}
+
+{% block extrahead %}
+<script src="/static/home/jquery/jquery.aCollapTable.js"></script>
+{% endblock %}
+{% block css %}
+.act-tr-level-1 .code{
+    padding-left: 15px;
+}
+.act-tr-level-2 .code{
+    padding-left: 30px;
+}
+.act-tr-level-3 .code{
+    padding-left: 45px;
+}
+.act-tr-level-4 .code{
+    padding-left: 60px;
+}
+.parent{
+    font-weight: 800;
+}
+.child{
+    font-weight: 500;
+}
+{% endblock css %}
+
+{% block logo %}
+{% endblock logo %}
+
+{% block content %}
+<div class="panel panel-info">
+<div class="panel-heading">Balance General</div>
+  <div class="panel-body">
+    <div class="row">
+        <div class="col-md-6">
+        <table class="table table-responsive table-hover collaptable">
+          <tbody>
+          {% for a in izquierda %}
+          <tr data-id="{{ a.id }}" data-parent="{{ a.render_parent }}" class="{{ a.get_class }}">
+            <td class="code">{{ a.code }}</td>
+            <td class="name">{{ a.name }}</td>
+            <td class="saldo">{{ a.saldo }}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        </div>
+        <div class="col-md-6">
+        <table class="table table-responsive table-hover collaptable">
+          <tbody>
+          {% for a in derecha %}
+          <tr data-id="{{ a.id }}" data-parent="{{ a.render_parent }}" class="{{ a.get_class }}">
+            <td class="code">{{ a.code }}</td>
+            <td class="name">{{ a.name }}</td>
+            <td class="saldo">{{ a.saldo }}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}
+
+{% block sitebar %}
+<li>
+    <a class="" href="/contabilidad/inicio/"><i class="fa fa-balance-scale fa-fw"></i> Balance General</a>
+</li>
+<li>
+    <a class="" href="/contabilidad/comprobantes/"><i class="fa fa-file-text fa-fw"></i> Comprobantes de Diario</a>
+</li>
+<li>
+    <a class="" href="/contabilidad/balanza/"><i class="fa fa-dashboard fa-fw"></i> Balanza de Comprobacion</a>
+</li>
+{% endblock sitebar %}
+
+
+{% block javascript %}
+$('.collaptable').aCollapTable({
+
+// the table is collapased at start
+startCollapsed: false,
+
+// the plus/minus button will be added like a column
+addColumn: false,
+
+// The expand button ("plus" +)
+plusButton: '<span class="i">+</span>',
+
+// The collapse button ("minus" -)
+minusButton: '<span class="i">-</span>'
+
+});
+
+{% endblock javascript %}
