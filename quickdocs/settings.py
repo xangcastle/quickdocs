@@ -30,6 +30,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
+    'facturacion',
     'multifilefield',
     'grappelli_dynamic_navbar',
     'grappelli',
