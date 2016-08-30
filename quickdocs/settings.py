@@ -30,9 +30,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
+<<<<<<< HEAD
     'home',
     'contabilidad',
     'segdel',
+=======
+    'rrhh',
+    'facturacion',
+>>>>>>> cargill
     'multifilefield',
     'grappelli_dynamic_navbar',
     'grappelli',
