@@ -114,8 +114,8 @@ class Factura(base_cliente):
 class Detalle(models.Model):
     factura = models.ForeignKey(Factura)
     producto = models.ForeignKey('Producto', null=True)
-    code = models.CharField(max_length=25, null=True, blank=True)
-    name = models.CharField(max_length=255, null=True)
+    code = models.CharField(max_length=25, null=True, blank=True, verbose_name="codigo")
+    name = models.CharField(max_length=255, null=True, verbose_name="nombre")
     cantidad = models.FloatField(null=True)
     precio = models.FloatField(null=True)
     descuento = models.FloatField(null=True)
