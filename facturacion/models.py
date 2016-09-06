@@ -34,8 +34,8 @@ def get_code(entidad, length=4):
 class base_cliente(models.Model):
 
     #datos del cliente
-    code = models.CharField(max_length=25, null=True, blank=True)
-    name = models.CharField(max_length=255, null=True)
+    code = models.CharField(max_length=25, null=True, blank=True, verbose_name="codigo")
+    name = models.CharField(max_length=255, null=True, verbose_name="nombre")
     identificacion = models.CharField(max_length=14, null=True, blank=True,
         help_text="RUC/CEDULA")
     telefono = models.CharField(max_length=25, null=True, blank=True)
