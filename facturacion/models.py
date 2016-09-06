@@ -162,8 +162,8 @@ class Cliente(base_cliente):
 
 
 class Producto(models.Model):
-    code = models.CharField(max_length=25, null=True, blank=True)
-    name = models.CharField(max_length=255, null=True)
+    code = models.CharField(max_length=25, null=True, blank=True, verbose_name="codigo")
+    name = models.CharField(max_length=255, null=True, verbose_name="nombre")
     precio = models.FloatField(null=True)
     costo = models.FloatField(null=True)
 
