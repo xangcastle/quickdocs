@@ -10,7 +10,7 @@ class Person(models.Model):
     nombre = models.CharField(max_length=125, verbose_name="nombre completo")
     moneda = models.CharField(max_length=20, choices=MONEDAS, default="DOLARES")
     salario = models.FloatField(null=True)
-    tc = models.FloatField(null=True, default=1.0)
+    tc = models.FloatField(null=True, default=1.0, verbose_name="tasa de cambio")
     cuenta = models.CharField(max_length=25, null=True, verbose_name="cuenta a aplicar",
     help_text="cuenta banpro cordobas")
     fecha_ingreso = models.DateField(null=True, blank=True)
