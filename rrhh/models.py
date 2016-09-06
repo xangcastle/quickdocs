@@ -28,4 +28,4 @@ class Person(models.Model):
 
     class Meta:
         verbose_name = "Persona"
-        verbose_name_plural = "Servicios Profecionales"
+        verbose_name_plural = "Servicios Profesionales"
