@@ -30,9 +30,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
-    'home',
-    'contabilidad',
-    'segdel',
+    #'home',
+    #'contabilidad',
+    #'segdel',
     'rrhh',
     'facturacion',
     'multifilefield',
@@ -46,8 +46,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'quickdoc',
-    'digitalizacion',
+    #'quickdoc',
+    #'digitalizacion',
 )
 
 MIDDLEWARE_CLASSES = (

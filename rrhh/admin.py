@@ -12,8 +12,9 @@ class person_admin(admin.ModelAdmin):
     list_display = ('cedula', 'nombre', 'salario', 'fecha_ingreso')
     search_fields = ('cedula', 'nombre')
     list_filter = ('salario',)
-    fields = ('nombre', ('cedula', 'salario'), 'fecha_ingreso')
-    actions = ['generar_planilla', 'action_fases']
+    fields = ('nombre', ('cedula', 'salario'), 'fecha_ingreso',
+        ('moneda', 'tc'), 'cuenta', ('deducciones', ))
+    actions = ['generar_planilla',]
 
     class rango_fecha(forms.Form):
         _selected_action = forms.CharField(widget=forms.MultipleHiddenInput)
@@ -58,21 +59,6 @@ class person_admin(admin.ModelAdmin):
         self.message_user(request, message)
         return render_to_response('rrhh/planilla_settings.html', data, RequestContext(request))
 
-    def action_fases(self, request, queryset):
-        if 'fase1' and 'fase2' in request.POST:
-            ctx = {'fase2':True}
-            ctx.update(csrf(request))
-            tpl = "rrhh/paso2.html"
-        elif 'fase1' in request.POST:
-            ctx = {'fase1': True}
-            ctx.update(csrf(request))
-            tpl = "rrhh/paso1.html"
-            return render(request, tpl, ctx)
-        else:
-            ctx = {}
-            ctx.update(csrf(request))
-            tpl = "rrhh/paso0.html"
-        return render(request, tpl, ctx)
-
 
 admin.site.register(Person, person_admin)
+admin.site.register(Deduccion)
