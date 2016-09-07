@@ -1,0 +1,140 @@
+{% extends "admin/change_form.html" %}
+
+{% block breadcrumbs %}{% endblock breadcrumbs %}
+
+{% block content %}
+<style media="screen">
+table tfoot th {
+  vertical-align: top;
+  padding: 6px 10px 6px;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 12px;
+  color: black;
+  white-space: nowrap;
+  border-left: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgi…pZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+  background-size: 100%;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #eeeeee),color-stop(100%, #e0e0e0));
+  background-image: -moz-linear-gradient(#eeeeee,#e0e0e0);
+  background-image: -webkit-linear-gradient(#eeeeee,#e0e0e0);
+  background-image: linear-gradient(#eeeeee,#e0e0e0);
+}
+</style>
+<h3>{{ header_tittle }}</h3>
+
+<form action="" method="post">
+
+    {% csrf_token %}
+    {% if not mes %}
+    {{form}}
+    <input type="submit" name="calcular" value="Calcular" />
+    <p>{{ explanation }}</p>
+    <ul>{{ queryset|unordered_list }}</ul>
+    {% endif %}
+    {% if mes %}
+    <table>
+      <thead>
+        <tr>
+          <th>
+            CEDULA
+          </th>
+          <th>
+            NOMBRE
+          </th>
+          <th>
+            SALARIO
+          </th>
+          <th>
+            IMPORTE
+          </th>
+          <th>
+            INSS
+          </th>
+          <th>
+            PATRONAL
+          </th>
+          <th>
+            IR 10%
+          </th>
+          <th>
+            INATEC 2%
+          </th>
+          <th>
+            NETO RECIBIR
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for q in queryset %}
+        <tr>
+          <th>
+            <input type="hidden" name="id" value="{{ q.id }}">
+            {{ q.cedula }}
+          </td>
+          <td>
+            {{ q.nombre }}
+          </td>
+          <td>
+            {{ q.salario }}
+          </td>
+          <td class="importe">
+            {{ q.importe }}
+          </td>
+          <td class="inss">
+            {{ q.inss }}
+          </td>
+          <td class="patronal">
+            {{ q.patronal }}
+          </td>
+          <td class="ir">
+            {{ q.ir }}
+          </td>
+          <td class="inatec">
+            {{ q.inatec }}
+          </td>
+          <th class="monto">
+            {{ q.monto }}
+          </th>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th class="importe">0.0</th>
+          <th class="inss">0.0</th>
+          <th class="patronal">0.0</th>
+          <th class="ir">0.0</th>
+          <th class="inatec">0.0</th>
+          <th class="monto">0.0</th>
+        </tr>
+      </tfoot>
+    </table>
+    <p>{{ explanation }}</p>
+    <input type="submit" name="aplicar" value="Aplicar" />
+    {% endif%}
+    <input type="hidden" name="action" value="{{ action }}" />
+</form>
+<script type="text/javascript">
+(function($) {
+	$(document).ready(function(){
+		var totales = $('tfoot th');
+		$.each(totales, function(key, value){
+			var clase = $(value).attr('class');
+			var total = 0.0;
+      if (clase) {
+        $.each($('tbody .' + clase), function(i, o){
+  				total += parseFloat($(o).html());
+  			});
+  			$(value).html(total.toFixed(2));
+      }
+		});
+	});
+  })(django.jQuery);
+</script>
+{% endblock %}
