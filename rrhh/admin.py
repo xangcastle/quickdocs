@@ -108,6 +108,6 @@ class person_admin(admin.ModelAdmin):
         data.update(csrf(request))
         self.message_user(request, message)
         return render_to_response('rrhh/pago_mes.html', data, RequestContext(request))
-    planilla_dia.short_description = "Generar planilla de corte por Dia"
+    planilla_mes.short_description = "Generar planilla de corte Mensual"
 
 admin.site.register(Person, person_admin)
