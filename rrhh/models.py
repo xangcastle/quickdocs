@@ -39,7 +39,7 @@ class Person(models.Model):
         return {'id': self.id, 'cedula': self.cedula, 'nombre': self.nombre,
         'salario': self.salario, 'tarifa': tarifa, 'importe': importe,
         'inss': inss, 'patronal': self.patronal(importe), 'inatec': inatec,
-        'ir': ir, 'monto': round(importe - (inss + ir + inatec), 2)}
+        'ir': ir, 'monto': round(importe - (inss + ir), 2)}
 
     def pago_mes(self, quinsena, mes):
         if quinsena == "AMBAS":
@@ -52,7 +52,7 @@ class Person(models.Model):
         return {'id': self.id, 'cedula': self.cedula, 'nombre': self.nombre,
         'salario': self.salario, 'importe': importe,
         'inss': inss, 'patronal': self.patronal(importe), 'inatec': inatec,
-        'ir': ir, 'monto': round(importe - (inss + ir + inatec), 2)}
+        'ir': ir, 'monto': round(importe - (inss + ir), 2)}
 
 
     class Meta:
