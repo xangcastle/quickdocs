@@ -78,7 +78,7 @@ def autocomplete_pod(request):
         for obj in qs:
             obj_json = {}
             obj_json['label'] = str('%s | %s' % (
-                obj.indice.name.encode('ascii', 'ignore'),
+                obj.expediente.nombre.encode('ascii', 'ignore'),
                 obj.indice.indice))
             obj_json['value'] = str(obj.code)
             result.append(obj_json)
