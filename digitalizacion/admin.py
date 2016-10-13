@@ -46,7 +46,7 @@ class indexacion_admin(ImportExportModelAdmin):
     date_hierarchy = "fecha"
     list_display = ('fecha', 'carga_manual',
         'carpeta', 'path')
-    fields = ('numero', 'archivos', 'make_ocr')
+    fields = ('archivos', 'make_ocr')
     actions = ['action_indexar']
 
     def action_indexar(self, request, queryset):

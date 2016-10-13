@@ -48,36 +48,35 @@ def extract_content(pdf):
     return content
 
 
-def extract_code(content):
-    code = []
-    todo = eliminar_letras(content).split(" ")
-    for n in todo:
-        if len(n) >= 15:
-            code.append(n)
+def extract_cedula(content):
+    i = content.find("IDENTIFICACION #") + 16
+    f = i + 14
+    code = limpiar_espacios(content[i:f])
     return code
 
 
-def comprobacion(code):
+def comprobacion(cedula):
     p = None
-    queryset = Documento.objects.filter(code=code)
+    queryset = Empleado.objects.filter(cedula=cedula)
     if queryset.count() > 0:
         p = queryset[0]
     if p:
+        print p.nombre.encode('ascii', 'ignore')
         return p
     else:
         return None
 
 
-def cargar_archivo(documento, path):
-    if documento:
-        documento.documento.name = get_media_url(documento, 'archivo.pdf')
-        documento.save()
-        ruta = documento.documento.path
+def cargar_ecuenta(empleado, path):
+    if empleado:
+        empleado.ecuenta.name = get_media_url(empleado, 'archivo.pdf')
+        empleado.save()
+        ruta = empleado.ecuenta.path
         carpeta = ruta.replace(os.path.basename(ruta), '')
         if not os.path.exists(carpeta):
             os.makedirs(carpeta)
         os.rename(path, os.path.join(settings.MEDIA_ROOT,
-        documento.documento.path))
+        empleado.ecuenta.path))
 
 
 def descomponer(path):
@@ -111,11 +110,10 @@ def indexar(path, indexacion):
         path = make_ocr(path)
     pdf = pyPdf.PdfFileReader(file(path, "r"))
     content = extract_content(pdf)
-    code = extract_code(content)
-    if len(code) > 0:
-        for c in code:
-            d = comprobacion(c)
-        cargar_archivo(d, path)
+    cedula = extract_cedula(content)
+    if cedula:
+        e = comprobacion(cedula)
+        cargar_ecuenta(e, path)
 
 
 def preparar_carpeta(path):
@@ -132,11 +130,12 @@ def preparar_carpeta(path):
 
 def indexar_carpeta(indexacion):
     path = indexacion.path()
-    archivos = sorted(os.listdir(path))
-    for a in archivos:
-        if a[-3:] == 'pdf':
-            path = os.path.join(indexacion.path(), a)
-            indexar(path, indexacion)
+    if preparar_carpeta(path):
+        archivos = sorted(os.listdir(path))
+        for a in archivos:
+            if a[-3:] == 'pdf':
+                path = os.path.join(indexacion.path(), a)
+                indexar(path, indexacion)
         #os.system("rm -rf %s" % path)
 
 
@@ -199,9 +198,7 @@ def get_path(indexacion, filename):
 
 class Indexacion(models.Model):
     fecha = models.DateField(auto_now_add=True, null=True)
-    archivos = MultiFileField(upload_to=get_path, null=True, blank=True)
-    numero = models.CharField(max_length=25, null=True, blank=True)
-    carpeta = models.CharField(max_length=8, null=True, blank=True)
+    carpeta = models.CharField(max_length=8, null=True)
     make_ocr = models.BooleanField(default=False, verbose_name="hacer ocr")
 
     def path(self):

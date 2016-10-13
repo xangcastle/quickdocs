@@ -86,4 +86,3 @@ def autocomplete_pod(request):
     else:
         data = 'fail'
     return HttpResponse(data, content_type='application/json')
-
