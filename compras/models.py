@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 FORMAS_PAGO = (
@@ -18,8 +19,6 @@ TIPOS_PROVEEDOR = (
 
 # Valores de la Evaluacion
 
-
-
 IMPORTANCIA = ((15, "SI"), (0, "NO"))
 COMPLEJIDAD = ((10, "ALTA"), (0, "BAJA"))
 REEMPLAZO = ((10, "ALTA COMPLEJIDAD"), (0, "COMPLEJIDAD ACEPTABLE"))
@@ -35,7 +34,7 @@ MARCO = ((5, "INFORMAL"), (0, "REGULADO"))
 
 
 class Proveedor(models.Model):
-
+    usuario                = models.ForeignKey(User, null=True, blank=True)
     codigo                 = models.CharField(max_length=15, verbose_name="Codigo del Proveedor")
     codigo_cliente         = models.CharField(max_length=15)
     nombre                 = models.CharField(max_length=125)

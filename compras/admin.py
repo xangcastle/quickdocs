@@ -14,10 +14,19 @@ class expediente_admin(admin.TabularInline):
 
 
 class proveedor_admin(ImportExportModelAdmin):
+
+    def get_queryset(self, request):
+        queryset = super(proveedor_admin, self).get_queryset(request)
+        usuario = request.user
+        if usuario.is_superuser:
+            return queryset
+        else:
+            return queryset.filter(usuario=usuario)
+
     change_form_template = "compras/proveedor.html"
-    list_display = ('codigo', 'nombre', 'identificacion', 'r_legal', 'servicio', 'email', 'telefono')
+    list_display = ('codigo', 'nombre', 'identificacion', 'r_legal', 'servicio', 'email', 'telefono', 'puntaje')
     search_fields = ('codigo', 'codigo_cliente', 'nombre', 'identificacion', 'r_legal', 'servicio', 'email', 'telefono')
-    list_filter = ('servicio', 'relacionado', 'contrato', 'activo')
+    list_filter = ('servicio', 'relacionado', 'contrato', 'activo', 'puntaje')
 
     fieldsets = (
         ('', {
@@ -25,7 +34,7 @@ class proveedor_admin(ImportExportModelAdmin):
                 'fields': (
                             ('codigo', 'codigo_cliente'), ('nombre', 'identificacion'),
                             ('servicio', 'actividad_economica'), ('forma_pago', 'contacto'),
-                            'email', ('telefono', 'r_legal'),'direccion',
+                            'email', ('telefono', 'r_legal'),'direccion', 'usuario'
                         )
         }),
         ('Informacion Adicional', {
