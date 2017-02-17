@@ -11,6 +11,7 @@ class expediente_admin(admin.TabularInline):
 
 
 class proveedor_admin(ImportExportModelAdmin):
+    change_form_template = "compras/proveedor.html"
     list_display = ('codigo', 'nombre', 'identificacion', 'r_legal', 'servicio', 'email', 'telefono')
     search_fields = ('codigo', 'codigo_cliente', 'nombre', 'identificacion', 'r_legal', 'servicio', 'email', 'telefono')
     list_filter = ('servicio', 'relacionado', 'contrato', 'activo')
@@ -20,7 +21,7 @@ class proveedor_admin(ImportExportModelAdmin):
                 'classes': ('grp-collapse grp-open', ),
                 'fields': (
                             ('codigo', 'codigo_cliente'), ('nombre', 'identificacion'),
-                            ('actividad', 'servicio'), ('forma_pago', 'contacto'),
+                            ('servicio', 'actividad_economica'), ('forma_pago', 'contacto'),
                             'email', ('telefono', 'r_legal'),'direccion',
                         )
         }),
@@ -29,7 +30,12 @@ class proveedor_admin(ImportExportModelAdmin):
                 'fields': (('cuenta_cordobas', 'beneficiario_cordobas'),
                           ('cuenta_dolares', 'beneficiario_dolares'),
                           ('relacionado', 'contrato', 'activo'),
-                          )
+                          ),}),
+        ('Parametros de la Evaluacion', {
+                'classes': ('grp-collapse grp-open evaluacion', ),
+                'fields': ('importacia', 'complejidad', 'reemplazo', 'credito',
+                           'anual', 'incumplimiento', 'actividad', 'recurrente',
+                           'transversal', 'incidencia', 'multicontrato', 'marco', 'puntaje')
         }),
       )
 

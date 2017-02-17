@@ -53,7 +53,7 @@ class Migration(migrations.Migration):
                 ('NOMCTACTO', models.CharField(max_length=60)),
                 ('SUCURSAL', models.CharField(max_length=60)),
                 ('BANDEJA', models.CharField(max_length=60)),
-                ('USR_TM', models.CharField(max_length=60)),
+                ('USR_TM', models.CharField(max_length=60, null=True)),
                 ('INDFUENTE', models.IntegerField()),
             ],
             options={
