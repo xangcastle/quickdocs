@@ -30,9 +30,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
-    #'home',
-    #'contabilidad',
-    #'segdel',
+    'ventas',
+    'ecuenta',
+    'compras',
     'rrhh',
     'facturacion',
     'multifilefield',
