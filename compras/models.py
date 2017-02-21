@@ -40,14 +40,15 @@ class Proveedor(models.Model):
     nombre                 = models.CharField(max_length=125)
     actividad_economica    = models.CharField(max_length=125, verbose_name="Actividad Comercial", null=True)
     servicio               = models.CharField(max_length=125, verbose_name="Servicios Prestados")
-    identificacion         = models.CharField(max_length=14, verbose_name="RUC/CEDULA")
+    identificacion         = models.CharField(max_length=24, verbose_name="RUC/CEDULA")
     direccion              = models.TextField(max_length=600, null=True, blank=True)
+    pago_anual             = models.FloatField(null=True, blank=True)
     forma_pago             = models.CharField(max_length=4, choices=FORMAS_PAGO)
     contacto               = models.CharField(max_length=120, null=True, blank=True)
     email                  = models.EmailField(max_length=120, null=True, blank=True)
     telefono               = models.CharField(max_length=60, null=True, blank=True)
     r_legal                = models.CharField(max_length=165, null=True, blank=True, verbose_name="Nombre del Representante Legal")
-
+    buro                   = models.CharField(max_length=165, null=True, blank=True, verbose_name="calificacion de credito")
     cuenta_cordobas        = models.CharField(max_length=18, null=True, blank=True)
     beneficiario_cordobas  = models.CharField(max_length=160, null=True, blank=True)
     cuenta_dolares         = models.CharField(max_length=18, null=True, blank=True)
@@ -55,6 +56,8 @@ class Proveedor(models.Model):
     relacionado            = models.BooleanField(default=False)
     contrato               = models.BooleanField(default=False)
     activo                 = models.BooleanField(default=True)
+
+    temp_user              = models.CharField(max_length=125, null=True, blank=True)
 
 
     # Datos de la evaluacion anual
@@ -80,6 +83,14 @@ class Proveedor(models.Model):
         verbose_name_plural = "proveedores"
 
 
+    def get_user(self):
+        nombre = self.temp_user.split(' ')[0]
+        apellido = self.temp_user.split(' ')[1]
+        usuario, created = User.objects.get_or_create(username=nombre[0].lower() + apellido.lower(), password="12345")
+        return usuario
+
+
+
 
 class Expediente(models.Model):
     proveedor = models.ForeignKey(Proveedor)
@@ -90,3 +101,55 @@ class Expediente(models.Model):
     class Meta:
         verbose_name = "Documento"
         verbose_name_plural = "Expediente"
+
+
+
+
+
+
+
+class nuevo(models.Model):
+    cuenta = models.CharField(max_length=60, null=True)
+    nombre = models.CharField(max_length=800, null=True)
+    nivel = models.CharField(max_length=5, null=True)
+    codigo_grupo = models.CharField(max_length=60, null=True)
+    codigo_tipo_id_cdr = models.CharField(max_length=60, null=True)
+
+    def relacionadas(self):
+        return sectorizacion.objects.filter(nuevo=self)
+
+
+class sectorizacion(models.Model):
+    codigo_tipo_id = models.CharField(max_length=800, null=True)
+    nombre_banca = models.CharField(max_length=800, null=True)
+    nivel = models.CharField(max_length=5, null=True)
+    codigo_grupo = models.CharField(max_length=60, null=True)
+    descripcion_cliente = models.CharField(max_length=800, null=True)
+    codigo_tipo_id_cdr = models.CharField(max_length=60, null=True)
+    descripcion_cdr = models.CharField(max_length=800, null=True)
+
+    nuevo = models.ForeignKey(nuevo, null=True)
+
+
+    def sugeridos(self):
+        resultados = []
+        html = ""
+        for palabra in self.nombre_banca.replace("(", "").replace(")", "").split(" "):
+            if len(palabra) > 3:
+                for a in nuevo.objects.filter(nombre__icontains=palabra).exclude(id__in=
+                    sectorizacion.objects.filter(nuevo__isnull=False).values_list('nuevo', flat=True)):
+                    if a not in resultados:
+                        resultados.append(a)
+
+        for n in resultados:
+            html += "<p>"
+            html += '<a class="sugerencia" data-sectorizacion="%s" data-nuevo="%s">%s - %s - %s</a>' % (self.id, n.id, n.id, n.cuenta, n.nombre)
+        return html
+    sugeridos.allow_tags = True
+
+
+    def elegido(self):
+        if self.nuevo:
+            return self.nuevo.cuenta + " - " + self.nuevo.nombre
+        else:
+            return "Ninguno"

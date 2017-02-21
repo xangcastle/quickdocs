@@ -69,12 +69,17 @@ WSGI_APPLICATION = 'quickdocs.wsgi.application'
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    'default_': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'django',
-	'USER': 'postgres',
-	'PASSWORD': 'postgres',
-	'HOST': 'localhost',
+	      'USER': 'postgres',
+	      'PASSWORD': 'postgres',
+	      'HOST': 'localhost',
+    },
+
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase',
     }
 }
 

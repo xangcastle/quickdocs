@@ -12,4 +12,5 @@ urlpatterns = patterns('',
     url(r'^adminactions/', include('adminactions.urls')),
     url(r'^facturacion/', include('facturacion.urls')),
     url(r'^digitalizacion/', include('digitalizacion.urls')),
+    url(r'^compras/', include('compras.urls')),
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

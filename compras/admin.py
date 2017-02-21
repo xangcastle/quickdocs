@@ -26,15 +26,16 @@ class proveedor_admin(ImportExportModelAdmin):
     change_form_template = "compras/proveedor.html"
     list_display = ('codigo', 'nombre', 'identificacion', 'r_legal', 'servicio', 'email', 'telefono', 'puntaje')
     search_fields = ('codigo', 'codigo_cliente', 'nombre', 'identificacion', 'r_legal', 'servicio', 'email', 'telefono')
-    list_filter = ('servicio', 'relacionado', 'contrato', 'activo', 'puntaje')
+    list_filter = ('usuario', 'servicio', 'relacionado', 'contrato', 'activo', 'puntaje')
 
     fieldsets = (
-        ('', {
+        ('Datos Generales', {
                 'classes': ('grp-collapse grp-open', ),
                 'fields': (
                             ('codigo', 'codigo_cliente'), ('nombre', 'identificacion'),
                             ('servicio', 'actividad_economica'), ('forma_pago', 'contacto'),
-                            'email', ('telefono', 'r_legal'),'direccion', 'usuario'
+                            'email', ('telefono', 'r_legal'),'direccion',
+                            ('usuario', 'buro', 'pago_anual')
                         )
         }),
         ('Informacion Adicional', {
@@ -55,3 +56,15 @@ class proveedor_admin(ImportExportModelAdmin):
 
 
 admin.site.register(Proveedor, proveedor_admin)
+
+class nuevo_admin(ImportExportModelAdmin):
+    list_display = ('cuenta', 'nombre', 'nivel', 'codigo_grupo', 'codigo_tipo_id_cdr')
+    list_filter = ('nivel',)
+
+class sectorizacion_admin(ImportExportModelAdmin):
+    change_list_template = "compras/sectorizacion.html"
+    def get_queryset(self, request):
+        return super(sectorizacion_admin, self).get_queryset(request) #.filter(nuevo__isnull=True)
+    list_display = ('codigo_tipo_id', 'nombre_banca', 'nivel', 'elegido', 'sugeridos')
+    list_filter = ('nivel',)
+    search_fields = ('nombre_banca', 'codigo_tipo_id')
