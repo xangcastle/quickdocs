@@ -200,8 +200,7 @@ class Indexacion(models.Model):
     fecha = models.DateField(auto_now_add=True, null=True)
     carpeta = models.CharField(max_length=8, null=True)
     make_ocr = models.BooleanField(default=False, verbose_name="hacer ocr")
-    archivos = MultiFileField(upload_to=get_path, null=True, blank=True)
-
+    archivos = 
     def path(self):
         return os.path.join(settings.MEDIA_ROOT, 'Indexacion', self.carpeta)
 

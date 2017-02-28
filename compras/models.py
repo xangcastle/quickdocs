@@ -22,8 +22,8 @@ TIPOS_PROVEEDOR = (
 IMPORTANCIA = ((15, "SI"), (0, "NO"))
 COMPLEJIDAD = ((10, "ALTA"), (0, "BAJA"))
 REEMPLAZO = ((10, "ALTA COMPLEJIDAD"), (0, "COMPLEJIDAD ACEPTABLE"))
-CREDITO = ((10, "B, C, D y D o Ninguna"), (0, "Excelentes (A)"))
-ANUAL = ((10, "Mayor 5% Utilidades Netas del periodo anterior"), (0, "Mayor 0% Utilidades Netas del periodo anterior"))
+CREDITO = ((10, "B, C, D y D o Ninguna"), (0, "Excelentes (A)"), (0, "No encontrado"), (0, "Ninguna"))
+ANUAL = ((10, "Mayor 5% Utilidades Netas del periodo anterior"), (0, "Menor al 5% Utilidades Netas del periodo anterior"))
 INCUMPLIMIENTO = ((10, "SI"), (0, "NO"))
 ACTIVIDAD = ((8, "SI"), (0, "NO"))
 RECURRENTE = ((7, "SI"), (0, "NO"))
@@ -82,6 +82,17 @@ class Proveedor(models.Model):
     class Meta:
         verbose_name_plural = "proveedores"
 
+    def evaluacion(self, campo):
+	if campo:
+	    return int(campo)
+	else:
+	    return 0
+
+
+    def calcular_puntaje(self):
+	return self.evaluacion(self.importacia) + self.evaluacion(self.complejidad) + self.evaluacion(self.reemplazo) + self.evaluacion(self.anual) + self.evaluacion(self.incumplimiento) + self.evaluacion(self.actividad) + self.evaluacion(self.recurrente) + self.evaluacion(self.transversal) + self.evaluacion(self.incidencia) + self.evaluacion(self.multicontrato) + self.evaluacion(self.marco)
+
+
 
     def get_user(self):
         nombre = self.temp_user.split(' ')[0]
@@ -90,6 +101,10 @@ class Proveedor(models.Model):
         return usuario
 
 
+
+    def save(self, *args, **kwargs):
+        self.puntaje = self.calcular_puntaje()
+	super(Proveedor, self).save(*args, **kwargs)
 
 
 class Expediente(models.Model):
