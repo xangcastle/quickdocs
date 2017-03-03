@@ -1,6 +1,7 @@
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
 from .models import *
+from .utils import *
 from django.contrib.admin import site
 import adminactions.actions as actions
 actions.add_to_site(site)
@@ -53,6 +54,11 @@ class proveedor_admin(ImportExportModelAdmin):
       )
 
     inlines = [expediente_admin,]
+
+    def reporte_evaluacion(self, request, queryset):
+        return render_to_excel("Reporte de Evaluacion.xlsx",datos_evaluacion(queryset))
+
+    actions = [reporte_evaluacion,]
 
 
 admin.site.register(Proveedor, proveedor_admin)

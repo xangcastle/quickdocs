@@ -22,15 +22,21 @@ TIPOS_PROVEEDOR = (
 IMPORTANCIA = ((15, "SI"), (0, "NO"))
 COMPLEJIDAD = ((10, "ALTA"), (0, "BAJA"))
 REEMPLAZO = ((10, "ALTA COMPLEJIDAD"), (0, "COMPLEJIDAD ACEPTABLE"))
-CREDITO = ((10, "B, C, D y D o Ninguna"), (0, "Excelentes (A)"), (0, "No encontrado"), (0, "Ninguna"))
+CREDITO = ((10, "B, C, D o D"), (0, "Excelentes (A), No encontrado/consultado, Ninguna"))
 ANUAL = ((10, "Mayor 5% Utilidades Netas del periodo anterior"), (0, "Menor al 5% Utilidades Netas del periodo anterior"))
 INCUMPLIMIENTO = ((10, "SI"), (0, "NO"))
 ACTIVIDAD = ((8, "SI"), (0, "NO"))
-RECURRENTE = ((7, "SI"), (0, "NO"))
+RECURRENTE = ((7, "Nueva Relacion"), (0, "Contrato Recurrente"))
 TRANSVERSAL = ((5, "SI"), (0, "NO"))
 INCIDENCIA = ((5, "ALTA INCIDENCIA"), (0, "POCA INCIDENCIA"))
 MULTICONTRATO = ((5, "MAYOR A DOS"), (0, "DOS O MENOR"))
 MARCO = ((5, "INFORMAL"), (0, "REGULADO"))
+
+
+def get_resp(tupla, valor):
+    for i in range(0, len(tupla)):
+        if valor == tupla[i][0]:
+            return tupla[i][1]
 
 
 class Proveedor(models.Model):
@@ -83,14 +89,31 @@ class Proveedor(models.Model):
         verbose_name_plural = "proveedores"
 
     def evaluacion(self, campo):
-	if campo:
-	    return int(campo)
-	else:
-	    return 0
+        if campo:
+            return int(campo)
+        else:
+            return 0
+
+    def respuesta(self, campo):
+        if campo:
+            return campo
+        else:
+            return 0
 
 
     def calcular_puntaje(self):
-	return self.evaluacion(self.importacia) + self.evaluacion(self.complejidad) + self.evaluacion(self.reemplazo) + self.evaluacion(self.anual) + self.evaluacion(self.incumplimiento) + self.evaluacion(self.actividad) + self.evaluacion(self.recurrente) + self.evaluacion(self.transversal) + self.evaluacion(self.incidencia) + self.evaluacion(self.multicontrato) + self.evaluacion(self.marco)
+	return self.evaluacion(self.importacia) \
+      + self.evaluacion(self.complejidad) \
+      + self.evaluacion(self.reemplazo) \
+      + self.evaluacion(self.credito) \
+      + self.evaluacion(self.anual) \
+      + self.evaluacion(self.incumplimiento) \
+      + self.evaluacion(self.actividad) \
+      + self.evaluacion(self.recurrente) \
+      + self.evaluacion(self.transversal) \
+      + self.evaluacion(self.incidencia) \
+      + self.evaluacion(self.multicontrato) \
+      + self.evaluacion(self.marco)
 
 
 
@@ -168,3 +191,32 @@ class sectorizacion(models.Model):
             return self.nuevo.cuenta + " - " + self.nuevo.nombre
         else:
             return "Ninguno"
+
+
+
+
+def datos_evaluacion(proveedores):
+    data = [["Codigo", "Nombre", "Actividad Economica",
+            "Identificacion", "Direccion", "Contacto", "Telefono",
+            "Monto Anual Facturado", "Resultado de Consulta de Credito",
+            "Importante para el funcionamiento estrategico del Banco y para atencion de clientes?", "Respuesta", "Valor",
+            "Complejidad de la contratacion", "Respuesta", "Valor",
+            "Habilidad para reemplazar a la empresa por otra", "Respuesta", "Valor",
+            "Reputacion financiera y solvencia", "Respuesta", "Valor",
+            "Monto total anual pagado al proveedor", "Respuesta", "Valor",
+            "La interrupcion del servicio genera incumplimiento regulatorio/legales al Banco", "Respuesta", "Valor",
+            "Importancia de la actividad a ser contratada en relacion al giro principal de negocios de la institucion", "Respuesta", "Valor",
+            "Relacion del Proveedor de servicios con la institucion financiera", "Respuesta", "Valor",
+            "Interrelacion de la operacion contratada con el resto de operacions de la institucion financiera", "Respuesta", "Valor",
+            "Fallas del proveedor pone en riesgo las ganancias, solvencia, liquidez, capital, reputacion, fondeo o sistemas de control interno", "Respuesta", "Valor",
+            "Existen mas de dos contratos vigentes con este mismo proveedor", "Respuesta", "Valor",
+            "Marco regulatorio del proveedor", "Respuesta", "Valor", "Puntaje Total"],]
+    for p in proveedores:
+        row = [p.codigo_cliente, p.nombre, p.actividad_economica, p.identificacion, p.direccion, p.contacto, p.telefono, p.pago_anual, p.buro, '', get_resp(IMPORTANCIA, p.importacia), p.importacia
+              , '', get_resp(COMPLEJIDAD, p.complejidad), p.complejidad, '', get_resp(REEMPLAZO, p.reemplazo), p.reemplazo, '', get_resp(CREDITO, p.credito), p.credito
+               , '', get_resp(ANUAL, p.anual), p.anual, '', get_resp(INCUMPLIMIENTO, p.incumplimiento), p.incumplimiento, '', get_resp(ACTIVIDAD, p.actividad), p.actividad
+               , '', get_resp(RECURRENTE, p.recurrente), p.recurrente, '', get_resp(TRANSVERSAL, p.transversal), p.transversal, '', get_resp(INCIDENCIA, p.incidencia), p.incidencia
+              , '', get_resp(MULTICONTRATO, p.multicontrato), p.multicontrato, '', get_resp(MARCO, p.marco), p.marco, p.puntaje
+              ]
+        data.append(row)
+    return data
