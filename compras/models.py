@@ -196,27 +196,13 @@ class sectorizacion(models.Model):
 
 
 def datos_evaluacion(proveedores):
-    data = [["Codigo", "Nombre", "Actividad Economica",
-            "Identificacion", "Direccion", "Contacto", "Telefono",
-            "Monto Anual Facturado", "Resultado de Consulta de Credito",
-            "Importante para el funcionamiento estrategico del Banco y para atencion de clientes?", "Respuesta", "Valor",
-            "Complejidad de la contratacion", "Respuesta", "Valor",
-            "Habilidad para reemplazar a la empresa por otra", "Respuesta", "Valor",
-            "Reputacion financiera y solvencia", "Respuesta", "Valor",
-            "Monto total anual pagado al proveedor", "Respuesta", "Valor",
-            "La interrupcion del servicio genera incumplimiento regulatorio/legales al Banco", "Respuesta", "Valor",
-            "Importancia de la actividad a ser contratada en relacion al giro principal de negocios de la institucion", "Respuesta", "Valor",
-            "Relacion del Proveedor de servicios con la institucion financiera", "Respuesta", "Valor",
-            "Interrelacion de la operacion contratada con el resto de operacions de la institucion financiera", "Respuesta", "Valor",
-            "Fallas del proveedor pone en riesgo las ganancias, solvencia, liquidez, capital, reputacion, fondeo o sistemas de control interno", "Respuesta", "Valor",
-            "Existen mas de dos contratos vigentes con este mismo proveedor", "Respuesta", "Valor",
-            "Marco regulatorio del proveedor", "Respuesta", "Valor", "Puntaje Total"],]
+    data = []
     for p in proveedores:
-        row = [p.codigo_cliente, p.nombre, p.actividad_economica, p.identificacion, p.direccion, p.contacto, p.telefono, p.pago_anual, p.buro, '', get_resp(IMPORTANCIA, p.importacia), p.importacia
-              , '', get_resp(COMPLEJIDAD, p.complejidad), p.complejidad, '', get_resp(REEMPLAZO, p.reemplazo), p.reemplazo, '', get_resp(CREDITO, p.credito), p.credito
-               , '', get_resp(ANUAL, p.anual), p.anual, '', get_resp(INCUMPLIMIENTO, p.incumplimiento), p.incumplimiento, '', get_resp(ACTIVIDAD, p.actividad), p.actividad
-               , '', get_resp(RECURRENTE, p.recurrente), p.recurrente, '', get_resp(TRANSVERSAL, p.transversal), p.transversal, '', get_resp(INCIDENCIA, p.incidencia), p.incidencia
-              , '', get_resp(MULTICONTRATO, p.multicontrato), p.multicontrato, '', get_resp(MARCO, p.marco), p.marco, p.puntaje
+        row = [p.codigo_cliente, p.nombre, p.actividad_economica, p.identificacion, p.direccion, p.contacto, p.telefono, p.pago_anual, p.buro, get_resp(IMPORTANCIA, p.importacia), p.importacia
+              , get_resp(COMPLEJIDAD, p.complejidad), p.complejidad, get_resp(REEMPLAZO, p.reemplazo), p.reemplazo, get_resp(CREDITO, p.credito), p.credito
+               , get_resp(ANUAL, p.anual), p.anual, get_resp(INCUMPLIMIENTO, p.incumplimiento), p.incumplimiento, get_resp(ACTIVIDAD, p.actividad), p.actividad
+               , get_resp(RECURRENTE, p.recurrente), p.recurrente, get_resp(TRANSVERSAL, p.transversal), p.transversal, get_resp(INCIDENCIA, p.incidencia), p.incidencia
+              , get_resp(MULTICONTRATO, p.multicontrato), p.multicontrato, get_resp(MARCO, p.marco), p.marco, p.puntaje
               ]
         data.append(row)
     return data
