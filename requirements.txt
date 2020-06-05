@@ -1,4 +1,4 @@
-Django==1.7
+Django==1.11.29
 Pillow==2.6.0
 PyPDF2==1.25.1
 PyYAML==3.11
