@@ -1,5 +1,5 @@
 Django==1.7
-Pillow==2.6.0
+Pillow==9.3.0
 PyPDF2==1.25.1
 PyYAML==3.11
 argh==0.26.1
